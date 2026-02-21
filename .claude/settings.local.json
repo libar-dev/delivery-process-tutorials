@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:www.npmjs.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(gh api \"repos/libar-dev/delivery-process/contents/src/config/define-config.ts\" --jq '.content' 2>&1 | base64 -d 2>&1)",
+      "Bash(gh api \"repos/libar-dev/delivery-process/contents/src/config/types.ts\" --jq '.content' 2>&1 | base64 -d 2>&1)",
+      "Bash(gh api \"repos/libar-dev/delivery-process/contents/src/config/presets.ts\" --jq '.content' 2>&1 | base64 -d 2>&1)",
+      "Bash(gh api \"repos/libar-dev/delivery-process/contents/src/config/project-config.ts\" --jq '.content' 2>&1 | base64 -d 2>&1)",
+      "Bash(gh api \"repos/libar-dev/delivery-process/contents/src/scanner/index.ts\" --jq '.content' 2>&1 | base64 -d 2>&1)",
+      "Bash(gh api \"repos/libar-dev/delivery-process/contents/src/lint/index.ts\" --jq '.content' 2>&1 | base64 -d 2>&1)",
+      "Bash(gh api \"repos/libar-dev/delivery-process/contents/src/validation/fsm/index.ts\" --jq '.content' 2>&1 | base64 -d 2>&1)",
+      "Bash(gh api \"repos/libar-dev/delivery-process/contents/src/api/index.ts\" --jq '.content' 2>&1 | base64 -d 2>&1)",
+      "Bash(gh api \"repos/libar-dev/delivery-process/contents/delivery-process.config.ts\" --jq '.content' 2>&1 | base64 -d 2>&1)",
+      "Bash(rm -rf /Users/darkomijic/dev-projects/dp-mini-demo/docs-generated && npm run docs:all 2>&1)",
+      "Bash(npm run:*)"
+    ]
+  }
+}
