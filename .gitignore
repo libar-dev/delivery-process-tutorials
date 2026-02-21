@@ -2,3 +2,20 @@ node_modules/
 dist/
 docs-generated/
 *.tsbuildinfo
+
+# macOS
+.DS_Store
+
+# Local editor config
+.claude/
+
+# Tutorial-generated artifacts (created progressively by the tutorial)
+src/
+tsconfig.json
+delivery-process.config.ts
+
+# Article generation run outputs
+scripts/outputs/
+
+# VHS generated GIFs (regenerable from .tape files)
+vhs/output/
