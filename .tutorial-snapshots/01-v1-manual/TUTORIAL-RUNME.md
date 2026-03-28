@@ -131,22 +131,22 @@ Key fields:
 
 This tutorial uses `libar-generic` throughout.
 
-### 2.3 Your first Process Data API call
+### 2.3 Your first Architect Data API call
 
 Even with no source files, you can query the system:
 
 ```bash {"closeTerminalOnSuccess":"false","name":"first-overview"}
-npm run process:overview 2>&1
+npm run architect:overview 2>&1
 ```
 
-The Process Data API is your window into the delivery process state. We will use it after every change.
+The Architect Data API is your window into the delivery process state. We will use it after every change.
 
 ### Checkpoint: Part 2
 
 ```bash {"closeTerminalOnSuccess":"false","name":"checkpoint-2"}
 echo "=== Part 2 Checkpoint ==="
 [ -f "architect.config.ts" ] && echo "architect.config.ts: PASS" || echo "architect.config.ts: FAIL"
-npm run process:overview 2>&1 | head -3
+npm run architect:overview 2>&1 | head -3
 ```
 
 ---
@@ -218,7 +218,7 @@ Four tags is all you need to get started:
 ### 3.3 See it detected
 
 ```bash {"closeTerminalOnSuccess":"false","name":"overview-after-first"}
-npm run process:overview 2>&1
+npm run architect:overview 2>&1
 ```
 
 > **Expected:** `1 patterns (0 completed, 1 active, 0 planned) = 0%`
@@ -226,7 +226,7 @@ npm run process:overview 2>&1
 Verify which files the scanner found:
 
 ```bash {"closeTerminalOnSuccess":"false","name":"sources-after-first"}
-npm run process:sources 2>&1
+npm run architect:sources 2>&1
 ```
 
 ### Recap: Part 3
@@ -339,13 +339,13 @@ echo "Updated src/sample-sources/user-service.ts with richness tags"
 ### Verify the enriched tags
 
 ```bash {"closeTerminalOnSuccess":"false","name":"tags-after-richness"}
-npm run process:tags 2>&1
+npm run architect:tags 2>&1
 ```
 
 ### Check overview with phases
 
 ```bash {"closeTerminalOnSuccess":"false","name":"overview-after-richness"}
-npm run process:overview 2>&1
+npm run architect:overview 2>&1
 ```
 
 > **Expected:** 2 patterns (UserService + UserRecord shape), Phase 1: Inception visible.
@@ -557,7 +557,7 @@ echo "Created src/sample-sources/event-store.ts"
 ### 5.4 See the dependency graph
 
 ```bash {"closeTerminalOnSuccess":"false","name":"overview-with-deps"}
-npm run process:overview 2>&1
+npm run architect:overview 2>&1
 ```
 
 > **Expected:** 6 patterns, blocking chain: AuthHandler -> UserService -> EventStore.
@@ -565,19 +565,19 @@ npm run process:overview 2>&1
 ### 5.5 Explore the dependency tree
 
 ```bash {"closeTerminalOnSuccess":"false","name":"dep-tree-auth"}
-npm run process:query -- dep-tree AuthHandler 2>&1
+npm run architect:query -- dep-tree AuthHandler 2>&1
 ```
 
 ### 5.6 Bounded contexts
 
 ```bash {"closeTerminalOnSuccess":"false","name":"arch-contexts"}
-npm run process:query -- arch context 2>&1
+npm run architect:query -- arch context 2>&1
 ```
 
 ### 5.7 Filter by status
 
 ```bash {"closeTerminalOnSuccess":"false","name":"list-roadmap"}
-npm run process:query -- list --status roadmap 2>&1
+npm run architect:query -- list --status roadmap 2>&1
 ```
 
 ### Checkpoint: Part 5
@@ -586,13 +586,13 @@ npm run process:query -- list --status roadmap 2>&1
 echo "=== Part 5 Checkpoint ==="
 echo ""
 echo "--- Sources (expect 3 TypeScript files) ---"
-npm run process:sources 2>&1 | grep -E '"count"|"file"'
+npm run architect:sources 2>&1 | grep -E '"count"|"file"'
 echo ""
 echo "--- Overview (expect 6 patterns) ---"
-npm run process:overview 2>&1 | head -8
+npm run architect:overview 2>&1 | head -8
 echo ""
 echo "--- Contexts (expect identity + persistence) ---"
-npm run process:query -- arch context 2>&1 | grep '"context"'
+npm run architect:query -- arch context 2>&1 | grep '"context"'
 ```
 
 ---
@@ -782,7 +782,7 @@ echo "Created src/specs/authentication.feature"
 ### 7.4 Query business rules
 
 ```bash {"closeTerminalOnSuccess":"false","name":"query-rules"}
-npm run process:rules 2>&1
+npm run architect:rules 2>&1
 ```
 
 > **Expected:** 5 business rules from 2 Gherkin features.
@@ -796,7 +796,7 @@ npm run docs:business-rules 2>&1
 ### 7.6 Check enriched overview
 
 ```bash {"closeTerminalOnSuccess":"false","name":"overview-after-gherkin"}
-npm run process:overview 2>&1
+npm run architect:overview 2>&1
 ```
 
 > **Expected:** 8 patterns (3 TS + 3 shapes + 2 Gherkin), blocking includes Authentication -> UserRegistration.
@@ -804,7 +804,7 @@ npm run process:overview 2>&1
 ### 7.7 Verify all sources
 
 ```bash {"closeTerminalOnSuccess":"false","name":"sources-after-gherkin"}
-npm run process:sources 2>&1
+npm run architect:sources 2>&1
 ```
 
 ### Checkpoint: Part 7
@@ -813,10 +813,10 @@ npm run process:sources 2>&1
 echo "=== Part 7 Checkpoint ==="
 echo ""
 echo "--- Sources ---"
-npm run process:sources 2>&1 | grep -E '"type"|"count"'
+npm run architect:sources 2>&1 | grep -E '"type"|"count"'
 echo ""
 echo "--- Rules ---"
-npm run process:rules 2>&1 | grep '"totalRules"'
+npm run architect:rules 2>&1 | grep '"totalRules"'
 echo ""
 echo "--- Business Rules Doc ---"
 [ -f "docs-generated/BUSINESS-RULES.md" ] && echo "BUSINESS-RULES.md: PASS" || echo "BUSINESS-RULES.md: FAIL"
@@ -897,7 +897,7 @@ Stub-specific tags:
 ### 8.2 Query stubs
 
 ```bash {"closeTerminalOnSuccess":"false","name":"query-stubs"}
-npm run process:stubs 2>&1
+npm run architect:stubs 2>&1
 ```
 
 > **Expected:** 3 stub entries (NotificationService + 2 shapes), all with `targetExists: false`.
@@ -907,8 +907,8 @@ npm run process:stubs 2>&1
 ```bash {"closeTerminalOnSuccess":"false","name":"checkpoint-8"}
 echo "=== Part 8 Checkpoint ==="
 [ -f "src/stubs/notification-service.stub.ts" ] && echo "stub file: PASS" || echo "stub file: FAIL"
-npm run process:stubs 2>&1 | grep '"unresolvedCount"'
-npm run process:sources 2>&1 | grep -A2 '"Stub'
+npm run architect:stubs 2>&1 | grep '"unresolvedCount"'
+npm run architect:sources 2>&1 | grep -A2 '"Stub'
 ```
 
 ---
@@ -970,7 +970,7 @@ done
 
 ---
 
-## Part 10: Advanced Process Data API
+## Part 10: Advanced Architect Data API
 
 > **What you learn:** Query project state with advanced CLI commands.
 
@@ -979,7 +979,7 @@ done
 See everything UserService touches -- uses, used-by, same-context peers:
 
 ```bash {"closeTerminalOnSuccess":"false","name":"arch-neighborhood"}
-npm run process:query -- arch neighborhood UserService 2>&1
+npm run architect:query -- arch neighborhood UserService 2>&1
 ```
 
 ### 10.2 Blocking analysis
@@ -987,7 +987,7 @@ npm run process:query -- arch neighborhood UserService 2>&1
 Find patterns stuck on incomplete dependencies:
 
 ```bash {"closeTerminalOnSuccess":"false","name":"arch-blocking"}
-npm run process:query -- arch blocking 2>&1
+npm run architect:query -- arch blocking 2>&1
 ```
 
 ### 10.3 Dangling references
@@ -995,7 +995,7 @@ npm run process:query -- arch blocking 2>&1
 Find broken references to nonexistent pattern names:
 
 ```bash {"closeTerminalOnSuccess":"false","name":"arch-dangling"}
-npm run process:query -- arch dangling 2>&1
+npm run architect:query -- arch dangling 2>&1
 ```
 
 > **Expected:** Empty array -- all references resolve correctly.
@@ -1005,23 +1005,23 @@ npm run process:query -- arch dangling 2>&1
 Get complete metadata for a single pattern:
 
 ```bash {"closeTerminalOnSuccess":"false","name":"pattern-detail"}
-npm run process:query -- pattern UserService 2>&1
+npm run architect:query -- pattern UserService 2>&1
 ```
 
 ### 10.5 Output modifiers
 
 ```bash {"closeTerminalOnSuccess":"false","name":"count-roadmap"}
 echo "--- How many roadmap patterns? ---"
-npm run process:query -- list --status roadmap --count 2>&1
+npm run architect:query -- list --status roadmap --count 2>&1
 echo ""
 echo "--- All pattern names ---"
-npm run process:query -- list --names-only 2>&1
+npm run architect:query -- list --names-only 2>&1
 ```
 
 ### 10.6 Final overview
 
 ```bash {"closeTerminalOnSuccess":"false","name":"final-overview"}
-npm run process:overview 2>&1
+npm run architect:overview 2>&1
 ```
 
 > **Expected:** 11 patterns, 3 blocking chains, 0% complete (no patterns have status `completed`).
@@ -1050,19 +1050,19 @@ echo "Total files: $(find docs-generated -name '*.md' -type f 2>/dev/null | wc -
 echo ""
 
 echo "--- Patterns ---"
-npm run process:query -- list --count 2>&1 | grep '"data"'
+npm run architect:query -- list --count 2>&1 | grep '"data"'
 echo ""
 
 echo "--- Business Rules ---"
-npm run process:rules 2>&1 | grep '"totalRules"'
+npm run architect:rules 2>&1 | grep '"totalRules"'
 echo ""
 
 echo "--- Blocking Chains ---"
-npm run process:query -- arch blocking 2>&1 | grep '"pattern"'
+npm run architect:query -- arch blocking 2>&1 | grep '"pattern"'
 echo ""
 
 echo "--- Bounded Contexts ---"
-npm run process:query -- arch context 2>&1 | grep '"context"'
+npm run architect:query -- arch context 2>&1 | grep '"context"'
 echo ""
 
 echo "========================================"

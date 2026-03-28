@@ -1,6 +1,6 @@
-# Context Engineering for AI-Assisted Codebases: A Hands-On Tutorial
+# Libar Architect: A Hands-On Tutorial
 
-> A step-by-step guide to `@libar-dev/architect` -- annotate your TypeScript, generate living docs, and give AI agents structured context instead of stale Markdown.
+> Annotate your TypeScript, generate living documentation, and give AI agents the structured context they need -- all from code as the single source of truth.
 
 ---
 
@@ -186,14 +186,14 @@ Add the following to your `package.json` scripts:
 ```json
 {
   "scripts": {
-    "process:query":    "tsx ./node_modules/@libar-dev/architect/dist/cli/process-api.js",
-    "process:overview": "tsx ./node_modules/@libar-dev/architect/dist/cli/process-api.js overview",
-    "process:status":   "tsx ./node_modules/@libar-dev/architect/dist/cli/process-api.js status",
-    "process:list":     "tsx ./node_modules/@libar-dev/architect/dist/cli/process-api.js list",
-    "process:tags":     "tsx ./node_modules/@libar-dev/architect/dist/cli/process-api.js tags",
-    "process:sources":  "tsx ./node_modules/@libar-dev/architect/dist/cli/process-api.js sources",
-    "process:rules":    "tsx ./node_modules/@libar-dev/architect/dist/cli/process-api.js rules",
-    "process:stubs":    "tsx ./node_modules/@libar-dev/architect/dist/cli/process-api.js stubs",
+    "architect:query":    "tsx ./node_modules/@libar-dev/architect/dist/cli/process-api.js",
+    "architect:overview": "tsx ./node_modules/@libar-dev/architect/dist/cli/process-api.js overview",
+    "architect:status":   "tsx ./node_modules/@libar-dev/architect/dist/cli/process-api.js status",
+    "architect:list":     "tsx ./node_modules/@libar-dev/architect/dist/cli/process-api.js list",
+    "architect:tags":     "tsx ./node_modules/@libar-dev/architect/dist/cli/process-api.js tags",
+    "architect:sources":  "tsx ./node_modules/@libar-dev/architect/dist/cli/process-api.js sources",
+    "architect:rules":    "tsx ./node_modules/@libar-dev/architect/dist/cli/process-api.js rules",
+    "architect:stubs":    "tsx ./node_modules/@libar-dev/architect/dist/cli/process-api.js stubs",
 
     "docs:patterns":       "tsx ./node_modules/@libar-dev/architect/dist/cli/generate-docs.js -g patterns -f",
     "docs:roadmap":        "tsx ./node_modules/@libar-dev/architect/dist/cli/generate-docs.js -g roadmap -f",
@@ -202,7 +202,9 @@ Add the following to your `package.json` scripts:
     "docs:architecture":   "tsx ./node_modules/@libar-dev/architect/dist/cli/generate-docs.js -g architecture -f",
     "docs:business-rules": "tsx ./node_modules/@libar-dev/architect/dist/cli/generate-docs.js -g business-rules -f",
     "docs:taxonomy":       "tsx ./node_modules/@libar-dev/architect/dist/cli/generate-docs.js -g taxonomy -f",
-    "docs:all":            "tsx ./node_modules/@libar-dev/architect/dist/cli/generate-docs.js -g patterns,roadmap,reference-docs,overview-rdm,architecture,business-rules,taxonomy -f",
+    "docs:adrs":           "tsx ./node_modules/@libar-dev/architect/dist/cli/generate-docs.js -g adrs -f",
+    "docs:design-review":  "tsx ./node_modules/@libar-dev/architect/dist/cli/generate-docs.js -g design-review -f",
+    "docs:all":            "tsx ./node_modules/@libar-dev/architect/dist/cli/generate-docs.js -g patterns,roadmap,reference-docs,overview-rdm,architecture,business-rules,taxonomy,adrs,design-review -f",
     "docs:list":           "tsx ./node_modules/@libar-dev/architect/dist/cli/generate-docs.js --list-generators",
 
     "lint:patterns": "tsx ./node_modules/@libar-dev/architect/dist/cli/lint-patterns.js -i \"src/sample-sources/**/*.ts\"",
@@ -213,16 +215,16 @@ Add the following to your `package.json` scripts:
 
 There are two categories of scripts:
 
-**`process:*`** -- Query the Process Data API. These scan your sources and return structured data (JSON or formatted text) about your patterns, status, relationships, and business rules. They never write files.
+**`architect:*`** -- Query the Architect Data API. These scan your sources and return structured data (JSON or formatted text) about your patterns, status, relationships, and business rules. They never write files.
 
 **`docs:*`** -- Run doc generators. These scan your sources and write markdown files to `docs-generated/`.
 
-### 2.5 Your first Process Data API call
+### 2.5 Your first Architect Data API call
 
 Even with no source files yet, you can run:
 
 ```bash
-npm run process:overview
+npm run architect:overview
 ```
 
 ```
@@ -232,13 +234,13 @@ npm run process:overview
 
 > **Note:** The actual output also includes a `=== DATA API ===` help reference section listing available subcommands. This section is omitted from the article outputs for brevity. See the [Issues & Improvements](#issues--improvements-for-next-revision) section for details.
 
-The Process Data API is your window into the delivery process state. We will use it after every change to see what the system detects.
+The Architect Data API is your window into the delivery process state. We will use it after every change to see what the system detects.
 
 ### Checkpoint: Part 2
 
 - `architect.config.ts` exists with `defineConfig()`
-- `package.json` has all `process:*` and `docs:*` scripts
-- `npm run process:overview` runs without errors
+- `package.json` has all `architect:*` and `docs:*` scripts
+- `npm run architect:overview` runs without errors
 
 ---
 
@@ -311,7 +313,7 @@ Four tags is all you need to get started:
 ### 3.3 See it detected
 
 ```bash
-npm run process:overview
+npm run architect:overview
 ```
 
 ```
@@ -324,7 +326,7 @@ npm run process:overview
 Verify which files the scanner found:
 
 ```bash
-npm run process:sources
+npm run architect:sources
 ```
 
 ```json
@@ -385,10 +387,10 @@ Architecture tags place your pattern in a structured topology:
 | `@architect-arch-context` | `identity` | Bounded context (creates diagram subgraphs) |
 | `@architect-arch-layer` | `application` | Architecture layer: `domain`, `application`, `infrastructure` |
 
-Run `npm run process:tags` to see architecture metadata in the tag usage report:
+Run `npm run architect:tags` to see architecture metadata in the tag usage report:
 
 ```bash
-npm run process:tags
+npm run architect:tags
 ```
 
 ```json
@@ -430,7 +432,7 @@ Add these tags to `user-service.ts`:
 | `@architect-release` | `v0.1.0` | Target release version |
 
 ```bash
-npm run process:overview
+npm run architect:overview
 ```
 
 ```
@@ -468,7 +470,7 @@ export interface UserRecord {
 | `@architect-shape` | `reference-sample` | Mark an interface for shape discovery (optional group name) |
 
 ```bash
-npm run process:overview
+npm run architect:overview
 ```
 
 ```
@@ -525,7 +527,7 @@ Here is the complete tag reference for TypeScript annotations. You have now used
 - `user-service.ts` has architecture tags (`arch-role`, `arch-context`, `arch-layer`)
 - `user-service.ts` has enrichment tags (`usecase`, `quarter`, `phase`, `release`)
 - `user-service.ts` has shape extraction (`extract-shapes` + `@architect-shape` on interface)
-- `npm run process:overview` shows "Phase 1: Inception"
+- `npm run architect:overview` shows "Phase 1: Inception"
 
 ### Recap: Part 4
 
@@ -752,7 +754,7 @@ These files use the same tag patterns you learned: identity + architecture + enr
 ### 5.4 See the dependency graph
 
 ```bash
-npm run process:overview
+npm run architect:overview
 ```
 
 ```
@@ -772,7 +774,7 @@ AuthHandler blocked by: UserService
 Explore the full dependency tree:
 
 ```bash
-npm run process:query -- dep-tree AuthHandler
+npm run architect:query -- dep-tree AuthHandler
 ```
 
 ```
@@ -788,7 +790,7 @@ This shows the chain from root dependency (EventStore) through UserService to Au
 List all bounded contexts:
 
 ```bash
-npm run process:query -- arch context
+npm run architect:query -- arch context
 ```
 
 ```json
@@ -814,7 +816,7 @@ npm run process:query -- arch context
 ### 5.6 Filter by status
 
 ```bash
-npm run process:query -- list --status roadmap
+npm run architect:query -- list --status roadmap
 ```
 
 ```json
@@ -838,15 +840,15 @@ Only AuthHandler has status `roadmap` at this point. EventStore is `deferred`, n
 ### Checkpoint: Part 5
 
 Before moving on, verify:
-- `npm run process:sources` shows 3 TypeScript files
-- `npm run process:overview` shows 6 patterns (3 main + 3 shapes)
-- `npm run process:query -- arch context` shows `identity` and `persistence`
-- `npm run process:query -- dep-tree AuthHandler` shows a dependency chain
+- `npm run architect:sources` shows 3 TypeScript files
+- `npm run architect:overview` shows 6 patterns (3 main + 3 shapes)
+- `npm run architect:query -- arch context` shows `identity` and `persistence`
+- `npm run architect:query -- dep-tree AuthHandler` shows a dependency chain
 
 ### Recap: Part 5
 
 - Multiple sources with `@architect-uses` and `@architect-depends-on` create a live dependency graph
-- The `process:overview` blocking report surfaces dependency chains automatically
+- The `architect:overview` blocking report surfaces dependency chains automatically
 - `dep-tree` shows recursive dependencies for any pattern
 - Pattern names in relationship tags must match exactly (case-sensitive)
 
@@ -1103,7 +1105,7 @@ This feature demonstrates cross-pattern traceability:
 ### 7.5 Query business rules
 
 ```bash
-npm run process:rules
+npm run architect:rules
 ```
 
 ```json
@@ -1213,7 +1215,7 @@ Running generator: business-rules
 ### 7.7 Check the enriched overview
 
 ```bash
-npm run process:overview
+npm run architect:overview
 ```
 
 ```
@@ -1234,7 +1236,7 @@ The Gherkin features added 2 more main patterns (UserRegistration, Authenticatio
 ### 7.8 Verify all sources
 
 ```bash
-npm run process:sources
+npm run architect:sources
 ```
 
 ```json
@@ -1269,10 +1271,10 @@ npm run process:sources
 
 ### Checkpoint: Part 7
 
-- `npm run process:sources` shows 3 TypeScript + 2 Gherkin files
-- `npm run process:rules` returns 5 business rules
+- `npm run architect:sources` shows 3 TypeScript + 2 Gherkin files
+- `npm run architect:rules` returns 5 business rules
 - `docs-generated/BUSINESS-RULES.md` exists
-- `npm run process:overview` shows 8 patterns
+- `npm run architect:overview` shows 8 patterns
 
 ### Recap: Part 7
 
@@ -1352,7 +1354,7 @@ export interface NotificationResult {
 ### 8.3 Query stubs
 
 ```bash
-npm run process:stubs
+npm run architect:stubs
 ```
 
 ```json
@@ -1408,8 +1410,8 @@ npm run process:stubs
 ### Checkpoint: Part 8
 
 - `src/stubs/notification-service.stub.ts` exists with `@architect-target` and `@architect-since`
-- `npm run process:stubs` shows 3 stub entries with `targetExists: false`
-- `npm run process:sources` shows 1 stub file
+- `npm run architect:stubs` shows 3 stub entries with `targetExists: false`
+- `npm run architect:sources` shows 1 stub file
 
 ### Recap: Part 8
 
@@ -1725,29 +1727,29 @@ The 3 errors are from `@architect-shape` annotations on interfaces (UserRecord a
 
 ---
 
-## Part 10: Advanced Process Data API
+## Part 10: Advanced Architect Data API
 
-Throughout this tutorial, you have used `process:overview`, `process:sources`, `process:tags`, `process:rules`, `process:stubs`, and commands like `dep-tree`, `list`, and `arch context`. This section covers advanced queries you have not seen yet.
+Throughout this tutorial, you have used `architect:overview`, `architect:sources`, `architect:tags`, `architect:rules`, `architect:stubs`, and commands like `dep-tree`, `list`, and `arch context`. This section covers advanced queries you have not seen yet.
 
 ### 10.1 Commands you already know
 
 | Command | First Used | Purpose |
 |---------|-----------|---------|
-| `process:overview` | Part 2 | Project health summary |
-| `process:sources` | Part 3 | Source file inventory |
-| `process:tags` | Part 4 | Tag usage distribution |
-| `process:list` | Part 5 | Pattern listing with filters |
+| `architect:overview` | Part 2 | Project health summary |
+| `architect:sources` | Part 3 | Source file inventory |
+| `architect:tags` | Part 4 | Tag usage distribution |
+| `architect:list` | Part 5 | Pattern listing with filters |
 | `dep-tree` | Part 5 | Recursive dependency chains |
 | `arch context` | Part 5 | Bounded context listing |
-| `process:rules` | Part 7 | Business rules from Gherkin |
-| `process:stubs` | Part 8 | Design stub resolution status |
+| `architect:rules` | Part 7 | Business rules from Gherkin |
+| `architect:stubs` | Part 8 | Design stub resolution status |
 
 ### 10.2 Architecture neighborhood
 
 See everything a pattern touches -- uses, used-by, same-context peers:
 
 ```bash
-npm run process:query -- arch neighborhood UserService
+npm run architect:query -- arch neighborhood UserService
 ```
 
 ```json
@@ -1823,7 +1825,7 @@ The neighborhood view shows the full connectivity for UserService: it uses Event
 Find patterns stuck on incomplete dependencies:
 
 ```bash
-npm run process:query -- arch blocking
+npm run architect:query -- arch blocking
 ```
 
 ```json
@@ -1847,7 +1849,7 @@ Three blocking chains are visible:
 Find broken references to nonexistent pattern names:
 
 ```bash
-npm run process:query -- arch dangling
+npm run architect:query -- arch dangling
 ```
 
 ```json
@@ -1864,7 +1866,7 @@ Empty array -- all pattern references resolve correctly. If you had a typo like 
 Get complete metadata for a single pattern:
 
 ```bash
-npm run process:query -- pattern UserService
+npm run architect:query -- pattern UserService
 ```
 
 ```json
@@ -1942,7 +1944,7 @@ Any JSON-outputting command supports these composable modifiers:
 
 ```bash
 # How many roadmap patterns?
-npm run process:query -- list --status roadmap --count
+npm run architect:query -- list --status roadmap --count
 ```
 
 ```json
@@ -1954,7 +1956,7 @@ npm run process:query -- list --status roadmap --count
 
 ```bash
 # Just the names of all patterns
-npm run process:query -- list --names-only
+npm run architect:query -- list --names-only
 ```
 
 ```json
@@ -1979,7 +1981,7 @@ npm run process:query -- list --names-only
 ### 10.7 Final overview
 
 ```bash
-npm run process:overview
+npm run architect:overview
 ```
 
 ```
@@ -2064,11 +2066,11 @@ The following discrepancies were found between the original tutorial (`TUTORIAL.
 
 ### Issue 1: `=== DATA API ===` section in overview output `[MINOR]`
 
-**Location:** TUTORIAL.md Parts 2, 3, 4, 5, 7 -- all `process:overview` expected outputs
+**Location:** TUTORIAL.md Parts 2, 3, 4, 5, 7 -- all `architect:overview` expected outputs
 
 **Expected (tutorial):** Overview output shows only `=== PROGRESS ===`, `=== ACTIVE PHASES ===`, and `=== BLOCKING ===` sections.
 
-**Actual:** Every `process:overview` call also appends a `=== DATA API -- Use Instead of Explore Agents ===` help reference section listing available subcommands (overview, context, scope-validate, dep-tree, list, stubs, files, rules, arch blocking).
+**Actual:** Every `architect:overview` call also appends a `=== DATA API -- Use Instead of Explore Agents ===` help reference section listing available subcommands (overview, context, scope-validate, dep-tree, list, stubs, files, rules, arch blocking).
 
 **Impact:** The tutorial outputs appear truncated. Readers running the commands will see extra output not shown in the tutorial.
 
@@ -2104,7 +2106,7 @@ The following discrepancies were found between the original tutorial (`TUTORIAL.
 ```
 11 patterns (0 completed, 1 active, 10 planned) = 0%
 ```
-The checkpoint also says "npm run process:overview shows 11 patterns".
+The checkpoint also says "npm run architect:overview shows 11 patterns".
 
 **Actual:**
 ```
@@ -2119,7 +2121,7 @@ The checkpoint also says "npm run process:overview shows 11 patterns".
 
 ### Issue 4: Stubs output shows 3 entries, not 1 `[CONTENT]`
 
-**Location:** TUTORIAL.md Part 8, section 8.3 -- `process:stubs` expected output
+**Location:** TUTORIAL.md Part 8, section 8.3 -- `architect:stubs` expected output
 
 **Expected (tutorial):** Shows only 1 stub entry for NotificationService with `targetPath`, `since`, and `targetExists` fields.
 
@@ -2198,17 +2200,17 @@ Running generator: roadmap         → ROADMAP.md + 3 phase pages
 
 | Script | Description |
 |---|---|
-| **Process Data API** | |
-| `npm run process:query -- <cmd>` | Run any process-api subcommand |
-| `npm run process:overview` | Project health summary |
-| `npm run process:status` | Pattern counts and completion % |
-| `npm run process:list` | List all patterns |
-| `npm run process:tags` | Tag usage report |
-| `npm run process:sources` | Source file inventory |
-| `npm run process:rules` | Business rules from Gherkin |
-| `npm run process:stubs` | Design stubs with resolution status |
+| **Architect Data API** | |
+| `npm run architect:query -- <cmd>` | Run any architect-api subcommand |
+| `npm run architect:overview` | Project health summary |
+| `npm run architect:status` | Pattern counts and completion % |
+| `npm run architect:list` | List all patterns |
+| `npm run architect:tags` | Tag usage report |
+| `npm run architect:sources` | Source file inventory |
+| `npm run architect:rules` | Business rules from Gherkin |
+| `npm run architect:stubs` | Design stubs with resolution status |
 | **Doc Generators** | |
-| `npm run docs:all` | Generate all doc types (7 generators) |
+| `npm run docs:all` | Generate all doc types (9 generators) |
 | `npm run docs:patterns` | Pattern registry + detail pages |
 | `npm run docs:roadmap` | Roadmap by phase |
 | `npm run docs:reference` | Bespoke reference docs |
@@ -2216,6 +2218,8 @@ Running generator: roadmap         → ROADMAP.md + 3 phase pages
 | `npm run docs:architecture` | Architecture diagrams |
 | `npm run docs:business-rules` | Business rules + invariants |
 | `npm run docs:taxonomy` | Tag taxonomy reference |
+| `npm run docs:adrs` | Architecture Decision Records |
+| `npm run docs:design-review` | Design review documentation |
 | `npm run docs:list` | List all available generators |
 | **Linting** | |
 | `npm run lint:patterns` | Check annotation quality |
@@ -2269,3 +2273,7 @@ deferred  roadmap (blocked)
 **Relationships:** `uses`, `used-by`, `depends-on`, `enables`, `see-also`, `implements`
 
 **Stubs:** `target`, `since`
+
+**Decisions:** `adr`, `adr-status`, `adr-category`
+
+**Sequence:** `sequence-orchestrator`, `sequence-step`, `sequence-module`, `sequence-error`

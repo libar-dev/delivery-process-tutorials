@@ -6,9 +6,9 @@ runme:
 shell: bash
 ---
 
-# Context Engineering for AI-Assisted Codebases: Interactive Tutorial
+# Libar Architect: Interactive Tutorial
 
-> A hands-on Runme notebook for `@libar-dev/architect` -- annotate your TypeScript, generate living docs, and give AI agents structured context instead of stale Markdown.
+> Annotate your TypeScript, generate living documentation, and give AI agents the structured context they need -- all from code as the single source of truth.
 
 **How to use this notebook:**
 
@@ -189,20 +189,20 @@ This tutorial uses `libar-generic` throughout.
 
 ### 2.3 Add npm scripts
 
-Add the Process Data API, doc generator, and linting scripts to `package.json`:
+Add the Architect Data API, doc generator, and linting scripts to `package.json`:
 
 ```bash {"name":"add-npm-scripts"}
 node -e "
 const pkg = JSON.parse(require('fs').readFileSync('package.json', 'utf8'));
 pkg.scripts = {
-  'process:query':    'tsx ./node_modules/@libar-dev/architect/dist/cli/process-api.js',
-  'process:overview': 'tsx ./node_modules/@libar-dev/architect/dist/cli/process-api.js overview',
-  'process:status':   'tsx ./node_modules/@libar-dev/architect/dist/cli/process-api.js status',
-  'process:list':     'tsx ./node_modules/@libar-dev/architect/dist/cli/process-api.js list',
-  'process:tags':     'tsx ./node_modules/@libar-dev/architect/dist/cli/process-api.js tags',
-  'process:sources':  'tsx ./node_modules/@libar-dev/architect/dist/cli/process-api.js sources',
-  'process:rules':    'tsx ./node_modules/@libar-dev/architect/dist/cli/process-api.js rules',
-  'process:stubs':    'tsx ./node_modules/@libar-dev/architect/dist/cli/process-api.js stubs',
+  'architect:query':    'tsx ./node_modules/@libar-dev/architect/dist/cli/process-api.js',
+  'architect:overview': 'tsx ./node_modules/@libar-dev/architect/dist/cli/process-api.js overview',
+  'architect:status':   'tsx ./node_modules/@libar-dev/architect/dist/cli/process-api.js status',
+  'architect:list':     'tsx ./node_modules/@libar-dev/architect/dist/cli/process-api.js list',
+  'architect:tags':     'tsx ./node_modules/@libar-dev/architect/dist/cli/process-api.js tags',
+  'architect:sources':  'tsx ./node_modules/@libar-dev/architect/dist/cli/process-api.js sources',
+  'architect:rules':    'tsx ./node_modules/@libar-dev/architect/dist/cli/process-api.js rules',
+  'architect:stubs':    'tsx ./node_modules/@libar-dev/architect/dist/cli/process-api.js stubs',
 
   'docs:patterns':       'tsx ./node_modules/@libar-dev/architect/dist/cli/generate-docs.js -g patterns -f',
   'docs:roadmap':        'tsx ./node_modules/@libar-dev/architect/dist/cli/generate-docs.js -g roadmap -f',
@@ -211,7 +211,9 @@ pkg.scripts = {
   'docs:architecture':   'tsx ./node_modules/@libar-dev/architect/dist/cli/generate-docs.js -g architecture -f',
   'docs:business-rules': 'tsx ./node_modules/@libar-dev/architect/dist/cli/generate-docs.js -g business-rules -f',
   'docs:taxonomy':       'tsx ./node_modules/@libar-dev/architect/dist/cli/generate-docs.js -g taxonomy -f',
-  'docs:all':            'tsx ./node_modules/@libar-dev/architect/dist/cli/generate-docs.js -g patterns,roadmap,reference-docs,overview-rdm,architecture,business-rules,taxonomy -f',
+  'docs:adrs':           'tsx ./node_modules/@libar-dev/architect/dist/cli/generate-docs.js -g adrs -f',
+  'docs:design-review':  'tsx ./node_modules/@libar-dev/architect/dist/cli/generate-docs.js -g design-review -f',
+  'docs:all':            'tsx ./node_modules/@libar-dev/architect/dist/cli/generate-docs.js -g patterns,roadmap,reference-docs,overview-rdm,architecture,business-rules,taxonomy,adrs,design-review -f',
   'docs:list':           'tsx ./node_modules/@libar-dev/architect/dist/cli/generate-docs.js --list-generators',
 
   'lint:patterns': 'tsx ./node_modules/@libar-dev/architect/dist/cli/lint-patterns.js -i \"src/sample-sources/**/*.ts\"',
@@ -222,20 +224,20 @@ console.log('Added ' + Object.keys(pkg.scripts).length + ' npm scripts to packag
 "
 ```
 
-There are two categories of scripts:
+Two categories of scripts:
 
-- **`process:*`** -- Query the Process Data API. These scan your sources and return structured data (JSON or formatted text). They never write files.
-- **`docs:*`** -- Run doc generators. These scan your sources and write markdown files to `docs-generated/`.
+- **`architect:*`** -- Query the Architect Data API. Scan sources and return structured data (JSON or formatted text). Never write files.
+- **`docs:*`** -- Run doc generators. Scan sources and write markdown files to `docs-generated/`.
 
-### 2.4 Your first Process Data API call
+### 2.4 Your first Architect Data API call
 
-Even with no source files yet, you can query the system:
+Even with no source files yet, the system runs:
 
 ```bash {"closeTerminalOnSuccess":"false","name":"first-overview"}
-npm run process:overview 2>&1
+npm run architect:overview 2>&1
 ```
 
-The Process Data API is your window into the delivery process state. We will use it after every change.
+The Data API is your window into project state. We will use it after every change to see what the system detects.
 
 ### Checkpoint: Part 2
 
@@ -243,7 +245,7 @@ The Process Data API is your window into the delivery process state. We will use
 echo "=== Part 2 Checkpoint ==="
 [ -f "architect.config.ts" ] && echo "architect.config.ts: PASS" || echo "architect.config.ts: FAIL"
 node -e "const p=JSON.parse(require('fs').readFileSync('package.json','utf8')); console.log('npm scripts?', Object.keys(p.scripts || {}).length > 0 ? 'PASS (' + Object.keys(p.scripts).length + ' scripts)' : 'FAIL')"
-npm run process:overview 2>&1 | head -3
+npm run architect:overview 2>&1 | head -3
 ```
 
 ---
@@ -254,7 +256,7 @@ npm run process:overview 2>&1 | head -3
 
 ### 3.1 File opt-in
 
-Every file that the scanner should process needs a **file opt-in marker**. For the `libar-generic` preset, this is `/** @architect */` as a standalone JSDoc comment at the top. Without it, the file is invisible to the scanner.
+Every file needs a **file opt-in marker**: `/** @architect */` as a standalone JSDoc comment. Without it, the scanner ignores the file.
 
 ### 3.2 Create your first annotated source
 
@@ -315,7 +317,7 @@ Four tags is all you need to get started:
 ### 3.3 See it detected
 
 ```bash {"closeTerminalOnSuccess":"false","name":"overview-after-first"}
-npm run process:overview 2>&1
+npm run architect:overview 2>&1
 ```
 
 > **Expected:** `1 patterns (0 completed, 1 active, 0 planned) = 0%`
@@ -323,17 +325,12 @@ npm run process:overview 2>&1
 Verify which files the scanner found:
 
 ```bash {"closeTerminalOnSuccess":"false","name":"sources-after-first"}
-npm run process:sources 2>&1
+npm run architect:sources 2>&1
 ```
 
 ### Recap: Part 3
 
-You created one annotated file and proved the scanner detects it. The minimum viable annotation is:
-
-1. `@architect` -- file opt-in marker
-2. `@architect-pattern Name` -- names the pattern
-3. `@architect-status` -- FSM status
-4. A category flag (`@architect-core`, `-api`, or `-infra`)
+Minimum viable annotation: `@architect` (opt-in), `@architect-pattern` (name), `@architect-status` (lifecycle), and a category flag (`-core`, `-api`, or `-infra`).
 
 ---
 
@@ -436,13 +433,13 @@ echo "Updated src/sample-sources/user-service.ts with richness tags"
 ### Verify the enriched tags
 
 ```bash {"closeTerminalOnSuccess":"false","name":"tags-after-richness"}
-npm run process:tags 2>&1
+npm run architect:tags 2>&1
 ```
 
 ### Check overview with phases
 
 ```bash {"closeTerminalOnSuccess":"false","name":"overview-after-richness"}
-npm run process:overview 2>&1
+npm run architect:overview 2>&1
 ```
 
 > **Expected:** 2 patterns (UserService + UserRecord shape), Phase 1: Inception visible.
@@ -654,7 +651,7 @@ echo "Created src/sample-sources/event-store.ts"
 ### 5.4 See the dependency graph
 
 ```bash {"closeTerminalOnSuccess":"false","name":"overview-with-deps"}
-npm run process:overview 2>&1
+npm run architect:overview 2>&1
 ```
 
 > **Expected:** 6 patterns, blocking chain: AuthHandler -> UserService -> EventStore.
@@ -662,19 +659,19 @@ npm run process:overview 2>&1
 ### 5.5 Explore the dependency tree
 
 ```bash {"closeTerminalOnSuccess":"false","name":"dep-tree-auth"}
-npm run process:query -- dep-tree AuthHandler 2>&1
+npm run architect:query -- dep-tree AuthHandler 2>&1
 ```
 
 ### 5.6 Bounded contexts
 
 ```bash {"closeTerminalOnSuccess":"false","name":"arch-contexts"}
-npm run process:query -- arch context 2>&1
+npm run architect:query -- arch context 2>&1
 ```
 
 ### 5.7 Filter by status
 
 ```bash {"closeTerminalOnSuccess":"false","name":"list-roadmap"}
-npm run process:query -- list --status roadmap 2>&1
+npm run architect:query -- list --status roadmap 2>&1
 ```
 
 ### Checkpoint: Part 5
@@ -683,13 +680,13 @@ npm run process:query -- list --status roadmap 2>&1
 echo "=== Part 5 Checkpoint ==="
 echo ""
 echo "--- Sources (expect 3 TypeScript files) ---"
-npm run process:sources 2>&1 | grep -E '"count"|"file"'
+npm run architect:sources 2>&1 | grep -E '"count"|"file"'
 echo ""
 echo "--- Overview (expect 6 patterns) ---"
-npm run process:overview 2>&1 | head -8
+npm run architect:overview 2>&1 | head -8
 echo ""
 echo "--- Contexts (expect identity + persistence) ---"
-npm run process:query -- arch context 2>&1 | grep '"context"'
+npm run architect:query -- arch context 2>&1 | grep '"context"'
 ```
 
 ---
@@ -744,14 +741,9 @@ TypeScript annotations describe what exists. Gherkin features describe what need
 
 ### 7.1 Gherkin primer
 
-In Gherkin files: tags before `Feature:` are metadata (like JSDoc tags). `Background:` sets up shared context. `Rule:` blocks define business constraints. `Scenario:` blocks are test cases with Given/When/Then.
+Tags before `Feature:` are metadata. `Rule:` blocks define business constraints (extracted as invariants). `Scenario:` blocks are test cases.
 
-**Important:** Gherkin features must include the `@architect` opt-in tag. Tags use **colon syntax** (not spaces like TypeScript).
-
-| Syntax | Context | Example |
-|---|---|---|
-| Space-separated | TypeScript JSDoc | `@architect-pattern UserService` |
-| Colon-separated | Gherkin tags | `@architect-pattern:UserRegistration` |
+**Important:** Gherkin tags use **colon syntax**, not spaces: `@architect-pattern:UserRegistration` (vs TypeScript's `@architect-pattern UserService`).
 
 ### 7.2 Create user-registration.feature
 
@@ -879,7 +871,7 @@ echo "Created src/specs/authentication.feature"
 ### 7.4 Query business rules
 
 ```bash {"closeTerminalOnSuccess":"false","name":"query-rules"}
-npm run process:rules 2>&1
+npm run architect:rules 2>&1
 ```
 
 > **Expected:** 5 business rules from 2 Gherkin features.
@@ -893,7 +885,7 @@ npm run docs:business-rules 2>&1
 ### 7.6 Check enriched overview
 
 ```bash {"closeTerminalOnSuccess":"false","name":"overview-after-gherkin"}
-npm run process:overview 2>&1
+npm run architect:overview 2>&1
 ```
 
 > **Expected:** 8 patterns (3 TS + 3 shapes + 2 Gherkin), blocking includes Authentication -> UserRegistration.
@@ -901,7 +893,7 @@ npm run process:overview 2>&1
 ### 7.7 Verify all sources
 
 ```bash {"closeTerminalOnSuccess":"false","name":"sources-after-gherkin"}
-npm run process:sources 2>&1
+npm run architect:sources 2>&1
 ```
 
 ### Checkpoint: Part 7
@@ -910,10 +902,10 @@ npm run process:sources 2>&1
 echo "=== Part 7 Checkpoint ==="
 echo ""
 echo "--- Sources ---"
-npm run process:sources 2>&1 | grep -E '"type"|"count"'
+npm run architect:sources 2>&1 | grep -E '"type"|"count"'
 echo ""
 echo "--- Rules ---"
-npm run process:rules 2>&1 | grep '"totalRules"'
+npm run architect:rules 2>&1 | grep '"totalRules"'
 echo ""
 echo "--- Business Rules Doc ---"
 [ -f "docs-generated/BUSINESS-RULES.md" ] && echo "BUSINESS-RULES.md: PASS" || echo "BUSINESS-RULES.md: FAIL"
@@ -994,7 +986,7 @@ Stub-specific tags:
 ### 8.2 Query stubs
 
 ```bash {"closeTerminalOnSuccess":"false","name":"query-stubs"}
-npm run process:stubs 2>&1
+npm run architect:stubs 2>&1
 ```
 
 > **Expected:** 3 stub entries (NotificationService + 2 shapes), all with `targetExists: false`.
@@ -1004,25 +996,338 @@ npm run process:stubs 2>&1
 ```bash {"closeTerminalOnSuccess":"false","name":"checkpoint-8"}
 echo "=== Part 8 Checkpoint ==="
 [ -f "src/stubs/notification-service.stub.ts" ] && echo "stub file: PASS" || echo "stub file: FAIL"
-npm run process:stubs 2>&1 | grep '"unresolvedCount"'
-npm run process:sources 2>&1 | grep -A2 '"Stub'
+npm run architect:stubs 2>&1 | grep '"unresolvedCount"'
+npm run architect:sources 2>&1 | grep -A2 '"Stub'
 ```
 
 ---
 
-## Part 9: Full Generation & Linting
+## Part 9: Decision Records
 
-> **What you learn:** Generate all 26 docs, reference docs, and lint your annotations.
+> **What you learn:** Capture architecture decisions as Gherkin specs with ADR tags.
 
-### 9.1 Generate everything
+Architecture decisions are often discussed, agreed upon, then lost. ADR (Architecture Decision Record) specs capture them as structured Gherkin features that the system can extract, index, and include in generated documentation.
+
+### 9.1 Create decisions directory
+
+```bash {"name":"create-decisions-dir"}
+mkdir -p src/decisions
+echo "Created src/decisions/"
+```
+
+### 9.2 Create an ADR spec
+
+This ADR captures a testing policy decision -- the kind of foundational decision that shapes how a team works:
+
+```bash {"name":"create-adr-001"}
+cat > src/decisions/adr-001-gherkin-testing.feature << 'GHERKIN'
+@architect
+@architect-adr:001
+@architect-adr-status:accepted
+@architect-adr-category:testing
+@architect-pattern:ADR001GherkinOnlyTesting
+@architect-status:completed
+@architect-completed:2026-03-28
+@architect-core
+Feature: ADR-001 - Gherkin-Only Testing Policy
+
+  **Context:**
+  Projects that adopt Libar Architect use `.feature` files as structured
+  specifications that drive documentation generation. However, having both
+  `.test.ts` files and `.feature` files creates a dual-testing approach
+  where the Gherkin specs become stale decoration rather than living contracts.
+
+  **Decision:**
+  Enforce Gherkin-only testing for projects using Libar Architect:
+  - All acceptance criteria must be `.feature` files
+  - No parallel `.test.ts` files for behavior covered by specs
+  - Edge cases use Scenario Outline with Examples tables
+
+  **Consequences:**
+  | Type | Impact |
+  | Positive | Single source of truth for tests AND documentation |
+  | Positive | Living documentation always matches test coverage |
+  | Positive | Business rules extracted from Rule blocks are always current |
+  | Negative | Scenario Outline syntax more verbose than parameterized tests |
+
+  Background: Deliverables
+    Given the following deliverables:
+      | Deliverable | Status | Location |
+      | Testing policy definition | complete | CLAUDE.md |
+
+  Rule: Feature files serve as both specs and documentation source
+
+    **Invariant:** Every `.feature` file is simultaneously an executable
+    spec and a documentation source. This dual purpose is the primary
+    benefit of Gherkin-only testing.
+    **Rationale:** Parallel `.test.ts` files create a hidden test layer
+    invisible to the documentation pipeline, undermining the single source
+    of truth principle.
+    **Verified by:** Gherkin-only policy enforced
+
+    | Artifact | Without Gherkin-Only | With Gherkin-Only |
+    | Tests | .test.ts (hidden from docs) | .feature (visible in docs) |
+    | Business rules | Manually maintained | Extracted from Rule blocks |
+    | Acceptance criteria | Implicit in test code | Explicit in scenarios |
+    | Traceability | Manual cross-referencing | @architect-implements links |
+
+  @acceptance-criteria
+  Scenario: Gherkin-only policy enforced
+    Given a project using Libar Architect
+    When checking for test files
+    Then only step definition files (.steps.ts) are allowed alongside .feature files
+    And all behavioral tests are expressed as Gherkin scenarios
+GHERKIN
+echo "Created src/decisions/adr-001-gherkin-testing.feature"
+```
+
+ADR-specific tags:
+
+| Tag | Example | Purpose |
+|---|---|---|
+| `@architect-adr` | `001` | ADR number |
+| `@architect-adr-status` | `accepted` | Decision status: proposed, accepted, deprecated, superseded |
+| `@architect-adr-category` | `testing` | Decision category for grouping |
+
+The feature description follows **Context / Decision / Consequences** structure, which the ADR generator parses into structured output.
+
+### 9.3 Update configuration
+
+Add the decisions directory to the features source and scope the `adrs` generator to only decision files:
+
+```bash {"name":"update-config-decisions"}
+cat > architect.config.ts << 'TYPESCRIPT'
+import { defineConfig } from "@libar-dev/architect/config";
+
+export default defineConfig({
+  preset: "libar-generic",
+  sources: {
+    typescript: ["src/sample-sources/**/*.ts"],
+    features: ["src/specs/**/*.feature", "src/decisions/**/*.feature"],
+    stubs: ["src/stubs/**/*.ts"],
+  },
+  output: {
+    directory: "docs-generated",
+    overwrite: true,
+  },
+  generatorOverrides: {
+    adrs: {
+      replaceFeatures: ["src/decisions/**/*.feature"],
+    },
+  },
+});
+TYPESCRIPT
+echo "Updated architect.config.ts with decisions source and generator override"
+```
+
+The `generatorOverrides.adrs.replaceFeatures` tells the ADR generator to use *only* decision files, not the full features glob. Without this, every Gherkin spec would appear in the decisions output.
+
+### 9.4 Generate ADR documentation
+
+```bash {"closeTerminalOnSuccess":"false","name":"gen-adrs"}
+npm run docs:adrs 2>&1
+```
+
+### 9.5 Verify the decision is queryable
+
+```bash {"closeTerminalOnSuccess":"false","name":"overview-after-adr"}
+npm run architect:overview 2>&1
+```
+
+> **Expected:** Pattern count increases (ADR added as a completed pattern), completion percentage rises above 0%.
+
+### Checkpoint: Part 9
+
+```bash {"closeTerminalOnSuccess":"false","name":"checkpoint-9-decisions"}
+echo "=== Part 9 Checkpoint ==="
+[ -f "src/decisions/adr-001-gherkin-testing.feature" ] && echo "ADR file: PASS" || echo "ADR file: FAIL"
+[ -f "docs-generated/DECISIONS.md" ] && echo "DECISIONS.md: PASS" || echo "DECISIONS.md: FAIL"
+[ -d "docs-generated/decisions" ] && echo "decisions/ dir: PASS" || echo "decisions/ dir: FAIL"
+```
+
+---
+
+## Part 10: Design Reviews
+
+> **What you learn:** Generate sequence and component diagrams from annotated Gherkin specs.
+
+Design reviews visualize runtime interaction flows. By adding `@architect-sequence-*` tags to a Gherkin spec, you get auto-generated Mermaid diagrams that show how components interact, what data flows between them, and where errors are handled.
+
+### 10.1 Create a sequence-annotated spec
+
+This spec models the authentication flow across three components. Each `Rule:` block maps to a step in the sequence diagram:
+
+```bash {"name":"create-design-review-spec"}
+cat > src/specs/user-auth-flow.feature << 'GHERKIN'
+@architect
+@architect-pattern:UserAuthFlow
+@architect-status:roadmap
+@architect-api
+@architect-phase:2
+@architect-release:vNEXT
+@architect-quarter:Q1-2026
+@architect-implements:AuthHandler
+@architect-uses:UserService
+@architect-depends-on:UserRegistration
+@architect-sequence-orchestrator:auth-handler
+Feature: User Authentication Flow
+
+  A sequence-annotated spec that models the runtime interaction between
+  authentication components. Generates design review documents with
+  sequence and component diagrams.
+
+  Background: Deliverables
+    Given the following deliverables:
+      | Deliverable | Status | Location |
+      | Credential validation | Pending | src/sample-sources/auth-handler.ts |
+      | Session token creation | Pending | src/sample-sources/auth-handler.ts |
+      | User lookup | Pending | src/sample-sources/user-service.ts |
+
+  @architect-sequence-step:1
+  @architect-sequence-module:user-service
+  Rule: User lookup validates that the account exists and is active
+
+    **Invariant:** Authentication always begins with a user lookup.
+    No session is created for unknown or inactive users.
+    **Rationale:** Prevents wasted work on credential validation
+    for accounts that cannot authenticate.
+
+    **Input:** email: string
+    **Output:** UserRecord -- id, email, active
+
+    **Verified by:** Lookup returns active user, Lookup rejects inactive user
+
+    @acceptance-criteria @happy-path
+    Scenario: Lookup returns active user
+      Given a registered user with email "alice@example.com"
+      And the user account is active
+      When the authentication flow starts
+      Then UserService.findByEmail returns the UserRecord
+
+    @acceptance-criteria @architect-sequence-error
+    Scenario: Lookup rejects inactive user
+      Given a registered user with email "alice@example.com"
+      And the user account has been deactivated
+      When the authentication flow starts
+      Then authentication fails with "Account deactivated"
+
+  @architect-sequence-step:2
+  @architect-sequence-module:auth-handler
+  Rule: Credential validation checks the password against stored hash
+
+    **Invariant:** Password comparison uses constant-time comparison
+    to prevent timing attacks.
+    **Rationale:** Variable-time string comparison leaks password
+    length information through response timing.
+
+    **Input:** UserRecord, password: string
+    **Output:** AuthResult -- success, sessionId, error
+
+    **Verified by:** Valid credentials pass, Invalid credentials fail securely
+
+    @acceptance-criteria @happy-path
+    Scenario: Valid credentials pass
+      Given a valid UserRecord for "alice@example.com"
+      When the password matches the stored hash
+      Then AuthResult.success is true
+      And a sessionId is generated
+
+    @acceptance-criteria @architect-sequence-error
+    Scenario: Invalid credentials fail securely
+      Given a valid UserRecord for "alice@example.com"
+      When the password does not match
+      Then AuthResult.success is false
+      And the error message is "Invalid credentials"
+      And the error does not reveal whether email or password was wrong
+
+  @architect-sequence-step:3
+  @architect-sequence-module:event-store
+  Rule: Successful authentication emits a domain event
+
+    **Invariant:** Every successful login produces an auditable event.
+    Failed logins also emit events for security monitoring.
+    **Rationale:** Append-only event log provides complete audit trail
+    for compliance and security incident investigation.
+
+    **Input:** AuthResult, userId: string
+    **Output:** DomainEvent -- type, payload, timestamp
+
+    **Verified by:** Login success emits event, Login failure emits event
+
+    @acceptance-criteria @happy-path
+    Scenario: Login success emits event
+      Given authentication succeeded for user "alice@example.com"
+      When the event is recorded
+      Then a DomainEvent with type "auth.login.success" is appended
+      And the payload includes the userId and timestamp
+
+    @acceptance-criteria
+    Scenario: Login failure emits event
+      Given authentication failed for user "alice@example.com"
+      When the event is recorded
+      Then a DomainEvent with type "auth.login.failure" is appended
+      And the payload includes the attempted email and failure reason
+GHERKIN
+echo "Created src/specs/user-auth-flow.feature"
+```
+
+Sequence annotation tags (applied to Rule blocks):
+
+| Tag | Level | Purpose |
+|---|---|---|
+| `@architect-sequence-orchestrator` | Feature | Names the coordinator module |
+| `@architect-sequence-step` | Rule | Execution order (1, 2, 3...) |
+| `@architect-sequence-module` | Rule | Maps this step to a source module |
+| `@architect-sequence-error` | Scenario | Marks error/alternative paths |
+
+Data flow markers in Rule descriptions:
+- `**Input:**` defines the data type flowing into the step
+- `**Output:**` defines the data type returned from the step
+
+### 10.2 Generate the design review
+
+```bash {"closeTerminalOnSuccess":"false","name":"gen-design-review"}
+npm run docs:design-review 2>&1
+```
+
+### 10.3 Inspect the generated review
+
+```bash {"closeTerminalOnSuccess":"false","name":"show-design-review"}
+cat docs-generated/design-reviews/user-auth-flow.md
+```
+
+The design review contains:
+- **Sequence diagram** -- Mermaid `sequenceDiagram` showing runtime interaction flow, with error paths as `alt` blocks
+- **Component diagram** -- Mermaid `graph LR` showing data types flowing between modules
+- **Key type definitions** -- Table of types with fields, producers, and consumers
+- **Design questions** -- Verification checklist generated from the diagram properties
+
+All of this is derived from the `@architect-sequence-*` annotations and `**Input:**`/`**Output:**` markers in your Gherkin spec. Change the spec, regenerate, and the diagrams update.
+
+### Checkpoint: Part 10
+
+```bash {"closeTerminalOnSuccess":"false","name":"checkpoint-10-design-review"}
+echo "=== Part 10 Checkpoint ==="
+[ -f "src/specs/user-auth-flow.feature" ] && echo "flow spec: PASS" || echo "flow spec: FAIL"
+[ -f "docs-generated/design-reviews/user-auth-flow.md" ] && echo "design review: PASS" || echo "design review: FAIL"
+npm run architect:sources 2>&1 | grep '"count"'
+```
+
+---
+
+## Part 11: Full Generation & Linting
+
+> **What you learn:** Generate all docs, add reference docs, and lint annotations.
+
+### 11.1 Generate everything
 
 ```bash {"closeTerminalOnSuccess":"false","name":"gen-all"}
 npm run docs:all 2>&1
 ```
 
-> **Expected:** 7 generators, 26 files written.
+> **Expected:** 9 generators, 30 files written.
 
-### 9.2 List all generated files
+### 11.2 List all generated files
 
 ```bash {"closeTerminalOnSuccess":"false","name":"list-all-generated"}
 echo "=== All Generated Files ==="
@@ -1031,9 +1336,9 @@ echo ""
 echo "Total: $(find docs-generated -name "*.md" -type f | wc -l | tr -d ' ') files"
 ```
 
-### 9.3 Add referenceDocConfigs to configuration
+### 11.3 Add referenceDocConfigs to configuration
 
-Before generating reference docs, add a `referenceDocConfigs` entry to `architect.config.ts`. This defines a custom composite document scoped to specific bounded contexts:
+Add a `referenceDocConfigs` entry to `architect.config.ts` for a custom composite document scoped to specific bounded contexts:
 
 ```bash {"name":"add-reference-config"}
 cat > architect.config.ts << 'TYPESCRIPT'
@@ -1043,12 +1348,17 @@ export default defineConfig({
   preset: "libar-generic",
   sources: {
     typescript: ["src/sample-sources/**/*.ts"],
-    features: ["src/specs/**/*.feature"],
+    features: ["src/specs/**/*.feature", "src/decisions/**/*.feature"],
     stubs: ["src/stubs/**/*.ts"],
   },
   output: {
     directory: "docs-generated",
     overwrite: true,
+  },
+  generatorOverrides: {
+    adrs: {
+      replaceFeatures: ["src/decisions/**/*.feature"],
+    },
   },
   referenceDocConfigs: [
     {
@@ -1074,19 +1384,19 @@ TYPESCRIPT
 echo "Updated architect.config.ts with referenceDocConfigs"
 ```
 
-### 9.4 Generate the reference doc
+### 11.4 Generate the reference doc
 
 ```bash {"closeTerminalOnSuccess":"false","name":"gen-reference"}
 npm run docs:reference 2>&1
 ```
 
-### 9.5 List available generators
+### 11.5 List available generators
 
 ```bash {"closeTerminalOnSuccess":"false","name":"list-generators"}
 npm run docs:list 2>&1
 ```
 
-### 9.6 Lint patterns
+### 11.6 Lint patterns
 
 ```bash {"closeTerminalOnSuccess":"false","name":"lint-patterns"}
 npm run lint:patterns 2>&1 || true
@@ -1094,13 +1404,13 @@ npm run lint:patterns 2>&1 || true
 
 > **Note:** 3 errors are expected -- from `@architect-shape` annotations on interfaces that lack their own `@architect-pattern` names. This is normal.
 
-### Checkpoint: Part 9
+### Checkpoint: Part 11
 
-```bash {"closeTerminalOnSuccess":"false","name":"checkpoint-9"}
-echo "=== Part 9 Checkpoint ==="
+```bash {"closeTerminalOnSuccess":"false","name":"checkpoint-11"}
+echo "=== Part 11 Checkpoint ==="
 echo ""
 total=$(find docs-generated -name "*.md" -type f | wc -l | tr -d ' ')
-echo "Generated files: $total (expected: 26+)"
+echo "Generated files: $total (expected: 30+)"
 echo ""
 for f in docs-generated/PATTERNS.md docs-generated/ROADMAP.md docs-generated/ARCHITECTURE.md docs-generated/OVERVIEW.md docs-generated/BUSINESS-RULES.md docs-generated/TAXONOMY.md; do
   basename="$(basename $f)"
@@ -1110,61 +1420,61 @@ done
 
 ---
 
-## Part 10: Advanced Process Data API
+## Part 12: Advanced Architect Data API
 
 > **What you learn:** Query project state with advanced CLI commands.
 
-### 10.1 Architecture neighborhood
+### 12.1 Architecture neighborhood
 
 See everything UserService touches -- uses, used-by, same-context peers:
 
 ```bash {"closeTerminalOnSuccess":"false","name":"arch-neighborhood"}
-npm run process:query -- arch neighborhood UserService 2>&1
+npm run architect:query -- arch neighborhood UserService 2>&1
 ```
 
-### 10.2 Blocking analysis
+### 12.2 Blocking analysis
 
 Find patterns stuck on incomplete dependencies:
 
 ```bash {"closeTerminalOnSuccess":"false","name":"arch-blocking"}
-npm run process:query -- arch blocking 2>&1
+npm run architect:query -- arch blocking 2>&1
 ```
 
-### 10.3 Dangling references
+### 12.3 Dangling references
 
 Find broken references to nonexistent pattern names:
 
 ```bash {"closeTerminalOnSuccess":"false","name":"arch-dangling"}
-npm run process:query -- arch dangling 2>&1
+npm run architect:query -- arch dangling 2>&1
 ```
 
 > **Expected:** Empty array -- all references resolve correctly.
 
-### 10.4 Full pattern detail
+### 12.4 Full pattern detail
 
 Get complete metadata for a single pattern:
 
 ```bash {"closeTerminalOnSuccess":"false","name":"pattern-detail"}
-npm run process:query -- pattern UserService 2>&1
+npm run architect:query -- pattern UserService 2>&1
 ```
 
-### 10.5 Output modifiers
+### 12.5 Output modifiers
 
 ```bash {"closeTerminalOnSuccess":"false","name":"count-roadmap"}
 echo "--- How many roadmap patterns? ---"
-npm run process:query -- list --status roadmap --count 2>&1
+npm run architect:query -- list --status roadmap --count 2>&1
 echo ""
 echo "--- All pattern names ---"
-npm run process:query -- list --names-only 2>&1
+npm run architect:query -- list --names-only 2>&1
 ```
 
-### 10.6 Final overview
+### 12.6 Final overview
 
 ```bash {"closeTerminalOnSuccess":"false","name":"final-overview"}
-npm run process:overview 2>&1
+npm run architect:overview 2>&1
 ```
 
-> **Expected:** 11 patterns, 3 blocking chains, 0% complete (no patterns have status `completed`).
+> **Expected:** 13 patterns, 4 blocking chains, completion > 0% (ADR is completed).
 
 ---
 
@@ -1190,23 +1500,23 @@ echo "Total files: $(find docs-generated -name '*.md' -type f 2>/dev/null | wc -
 echo ""
 
 echo "--- Patterns ---"
-npm run process:query -- list --count 2>&1 | grep '"data"'
+npm run architect:query -- list --count 2>&1 | grep '"data"'
 echo ""
 
 echo "--- Business Rules ---"
-npm run process:rules 2>&1 | grep '"totalRules"'
+npm run architect:rules 2>&1 | grep '"totalRules"'
 echo ""
 
 echo "--- Blocking Chains ---"
-npm run process:query -- arch blocking 2>&1 | grep '"pattern"'
+npm run architect:query -- arch blocking 2>&1 | grep '"pattern"'
 echo ""
 
 echo "--- Bounded Contexts ---"
-npm run process:query -- arch context 2>&1 | grep '"context"'
+npm run architect:query -- arch context 2>&1 | grep '"context"'
 echo ""
 
 echo "========================================"
-echo "  All 10 parts complete!"
+echo "  All 12 parts complete!"
 echo "========================================"
 ```
 
@@ -1246,3 +1556,5 @@ deferred  roadmap (blocked)
 - **Shapes:** `extract-shapes`, `shape`
 - **Relationships:** `uses`, `used-by`, `depends-on`, `enables`, `see-also`, `implements`
 - **Stubs:** `target`, `since`
+- **Decisions:** `adr`, `adr-status`, `adr-category`
+- **Sequence:** `sequence-orchestrator`, `sequence-step`, `sequence-module`, `sequence-error`

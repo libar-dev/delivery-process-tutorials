@@ -166,6 +166,39 @@ The JS filenames (`process-api.js`, `generate-docs.js`, etc.) are unchanged — 
 
 ---
 
+## 11. npm script naming convention
+
+**Change:** Rename Data API scripts from `process:*` to `architect:*`.
+
+```diff
+- "process:query":    "tsx ./node_modules/@libar-dev/architect/dist/cli/process-api.js"
++ "architect:query":  "tsx ./node_modules/@libar-dev/architect/dist/cli/process-api.js"
+
+- "process:overview": "tsx ./node_modules/@libar-dev/architect/dist/cli/process-api.js overview"
++ "architect:overview": "tsx ./node_modules/@libar-dev/architect/dist/cli/process-api.js overview"
+```
+
+Same pattern for all 8 Data API scripts: `process:status` → `architect:status`, etc.
+
+---
+
+## 12. New generators available
+
+**Change:** Two new generators are available and should be added to `docs:all`.
+
+```diff
+- -g patterns,roadmap,reference-docs,overview-rdm,architecture,business-rules,taxonomy
++ -g patterns,roadmap,reference-docs,overview-rdm,architecture,business-rules,taxonomy,adrs,design-review
+```
+
+Add corresponding scripts:
+```json
+"docs:adrs":          "tsx .../generate-docs.js -g adrs -f",
+"docs:design-review": "tsx .../generate-docs.js -g design-review -f"
+```
+
+---
+
 ## Quick migration checklist
 
 1. [ ] Update `package.json` dependency: name + version
@@ -177,8 +210,10 @@ The JS filenames (`process-api.js`, `generate-docs.js`, etc.) are unchanged — 
 7. [ ] Update `.gitignore` if applicable
 8. [ ] Global find-replace in source files: `@libar-docs` → `@architect`
 9. [ ] Update npm script CLI paths: `@libar-dev/delivery-process/dist/` → `@libar-dev/architect/dist/`
-10. [ ] Regenerate documentation: `npm run docs:all`
-11. [ ] Grep audit: `grep -r "@libar-docs" --include="*.ts" --include="*.feature"` should return 0
+10. [ ] Rename npm scripts: `process:*` → `architect:*`
+11. [ ] Add `adrs` and `design-review` to `docs:all` generator list
+12. [ ] Regenerate documentation: `npm run docs:all`
+13. [ ] Grep audit: `grep -r "@libar-docs" --include="*.ts" --include="*.feature"` should return 0
 
 ## Grep audit commands
 

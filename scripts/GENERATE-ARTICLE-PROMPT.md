@@ -44,7 +44,7 @@ Follow the exact structure of `TUTORIAL-ARTICLE-v1.md` as a reference for style 
    - Section header (e.g., `## Part 3: Your First Annotation`)
    - Subsections with narrative text extracted from TUTORIAL-RUNME.md
    - Code blocks for file contents (from `snapshots/<part>/` files — use the actual file contents, not the heredoc from the cell)
-   - CLI command + output blocks: show the command (`npm run process:overview`) then the captured output from the corresponding `.txt` file
+   - CLI command + output blocks: show the command (`npm run architect:overview`) then the captured output from the corresponding `.txt` file
    - "What just happened" callouts after key steps
    - Skip checkpoint cells — they are verification-only and not useful in the article
 6. **Results Summary** — from `final-verification.txt`
