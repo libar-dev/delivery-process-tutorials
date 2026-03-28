@@ -4,12 +4,17 @@ export default defineConfig({
   preset: "libar-generic",
   sources: {
     typescript: ["src/sample-sources/**/*.ts"],
-    features: ["src/specs/**/*.feature"],
+    features: ["src/specs/**/*.feature", "src/decisions/**/*.feature"],
     stubs: ["src/stubs/**/*.ts"],
   },
   output: {
     directory: "docs-generated",
     overwrite: true,
+  },
+  generatorOverrides: {
+    adrs: {
+      replaceFeatures: ["src/decisions/**/*.feature"],
+    },
   },
   referenceDocConfigs: [
     {

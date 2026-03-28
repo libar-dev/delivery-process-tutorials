@@ -8,14 +8,3 @@ docs-generated/
 
 # Local editor config
 .claude/
-
-# Tutorial-generated artifacts (created progressively by the tutorial)
-src/
-tsconfig.json
-architect.config.ts
-
-# Article generation run outputs
-scripts/outputs/
-
-# VHS generated GIFs (regenerable from .tape files)
-vhs/output/
