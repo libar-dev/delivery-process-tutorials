@@ -1,10 +1,10 @@
 {
-  "name": "delivery-process-tutorials",
+  "name": "architect-tutorials",
   "version": "1.0.0",
   "type": "module",
   "private": true,
   "dependencies": {
-    "@libar-dev/delivery-process": "1.0.0-pre.0"
+    "@libar-dev/architect": "1.0.0-pre.3"
   },
   "devDependencies": {
     "typescript": "^5.7.0",

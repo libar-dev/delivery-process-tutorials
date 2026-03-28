@@ -12,7 +12,7 @@ docs-generated/
 # Tutorial-generated artifacts (created progressively by the tutorial)
 src/
 tsconfig.json
-delivery-process.config.ts
+architect.config.ts
 
 # Article generation run outputs
 scripts/outputs/

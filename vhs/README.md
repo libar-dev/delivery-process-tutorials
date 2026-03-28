@@ -1,6 +1,6 @@
 # VHS Tutorial Recordings
 
-Automated terminal recordings of the dp-mini-demo tutorial using [VHS](https://github.com/charmbracelet/vhs).
+Automated terminal recordings of the architect-mini-demo tutorial using [VHS](https://github.com/charmbracelet/vhs).
 
 ## Prerequisites
 
@@ -15,7 +15,7 @@ Tapes must be run **in order** — each part depends on the previous parts havin
 ### Record the full tutorial
 
 ```bash
-cd /path/to/dp-mini-demo
+cd /path/to/architect-mini-demo
 
 # Step 1: Clean setup
 vhs vhs/part-00-setup.tape

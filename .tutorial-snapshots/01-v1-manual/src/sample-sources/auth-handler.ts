@@ -1,22 +1,22 @@
-/** @libar-docs */
+/** @architect */
 
 /**
- * @libar-docs-pattern AuthHandler
- * @libar-docs-status roadmap
- * @libar-docs-api
- * @libar-docs-arch-role service
- * @libar-docs-arch-context identity
- * @libar-docs-arch-layer application
- * @libar-docs-uses UserService
- * @libar-docs-extract-shapes AuthResult
- * @libar-docs-phase 2
- * @libar-docs-release vNEXT
- * @libar-docs-brief Authentication and session management handler
- * @libar-docs-usecase "Authenticate a user with email and password"
- * @libar-docs-usecase "Validate an active session token"
- * @libar-docs-depends-on UserService
- * @libar-docs-quarter Q1-2026
- * @libar-docs-see-also UserService
+ * @architect-pattern AuthHandler
+ * @architect-status roadmap
+ * @architect-api
+ * @architect-arch-role service
+ * @architect-arch-context identity
+ * @architect-arch-layer application
+ * @architect-uses UserService
+ * @architect-extract-shapes AuthResult
+ * @architect-phase 2
+ * @architect-release vNEXT
+ * @architect-brief Authentication and session management handler
+ * @architect-usecase "Authenticate a user with email and password"
+ * @architect-usecase "Validate an active session token"
+ * @architect-depends-on UserService
+ * @architect-quarter Q1-2026
+ * @architect-see-also UserService
  *
  * ## AuthHandler - Authentication & Sessions
  *
@@ -28,7 +28,7 @@
  * - When creating or validating sessions
  */
 
-/** @libar-docs-shape reference-sample */
+/** @architect-shape reference-sample */
 export interface AuthResult {
   success: boolean;
   sessionId?: string;

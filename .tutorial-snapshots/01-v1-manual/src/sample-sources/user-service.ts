@@ -1,24 +1,24 @@
-/** @libar-docs */
+/** @architect */
 
 /**
- * @libar-docs-pattern UserService
- * @libar-docs-status active
- * @libar-docs-core
- * @libar-docs-arch-role service
- * @libar-docs-arch-context identity
- * @libar-docs-arch-layer application
- * @libar-docs-used-by AuthHandler
- * @libar-docs-uses EventStore
- * @libar-docs-extract-shapes UserRecord
- * @libar-docs-phase 1
- * @libar-docs-release v0.1.0
- * @libar-docs-brief Core user lifecycle management service
- * @libar-docs-usecase "Register a new user account via the signup form"
- * @libar-docs-usecase "Look up a user by ID for profile display"
- * @libar-docs-usecase "Deactivate a compromised user account"
- * @libar-docs-quarter Q1-2026
- * @libar-docs-depends-on EventStore
- * @libar-docs-see-also AuthHandler, EventStore
+ * @architect-pattern UserService
+ * @architect-status active
+ * @architect-core
+ * @architect-arch-role service
+ * @architect-arch-context identity
+ * @architect-arch-layer application
+ * @architect-used-by AuthHandler
+ * @architect-uses EventStore
+ * @architect-extract-shapes UserRecord
+ * @architect-phase 1
+ * @architect-release v0.1.0
+ * @architect-brief Core user lifecycle management service
+ * @architect-usecase "Register a new user account via the signup form"
+ * @architect-usecase "Look up a user by ID for profile display"
+ * @architect-usecase "Deactivate a compromised user account"
+ * @architect-quarter Q1-2026
+ * @architect-depends-on EventStore
+ * @architect-see-also AuthHandler, EventStore
  *
  * ## UserService - User Lifecycle Management
  *
@@ -31,7 +31,7 @@
  * - When deactivating user accounts
  */
 
-/** @libar-docs-shape reference-sample */
+/** @architect-shape reference-sample */
 export interface UserRecord {
   id: string;
   email: string;

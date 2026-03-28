@@ -1,22 +1,22 @@
-/** @libar-docs */
+/** @architect */
 
 /**
- * @libar-docs-pattern EventStore
- * @libar-docs-status deferred
- * @libar-docs-infra
- * @libar-docs-arch-role infrastructure
- * @libar-docs-arch-context persistence
- * @libar-docs-arch-layer infrastructure
- * @libar-docs-used-by UserService
- * @libar-docs-extract-shapes DomainEvent
- * @libar-docs-phase 3
- * @libar-docs-release vNEXT
- * @libar-docs-brief Append-only event store for domain event persistence
- * @libar-docs-usecase "Persist a domain event after a user action"
- * @libar-docs-usecase "Replay events for audit trail or debugging"
- * @libar-docs-quarter Q2-2026
- * @libar-docs-enables UserService
- * @libar-docs-see-also UserService
+ * @architect-pattern EventStore
+ * @architect-status deferred
+ * @architect-infra
+ * @architect-arch-role infrastructure
+ * @architect-arch-context persistence
+ * @architect-arch-layer infrastructure
+ * @architect-used-by UserService
+ * @architect-extract-shapes DomainEvent
+ * @architect-phase 3
+ * @architect-release vNEXT
+ * @architect-brief Append-only event store for domain event persistence
+ * @architect-usecase "Persist a domain event after a user action"
+ * @architect-usecase "Replay events for audit trail or debugging"
+ * @architect-quarter Q2-2026
+ * @architect-enables UserService
+ * @architect-see-also UserService
  *
  * ## EventStore - Append-Only Event Storage
  *
@@ -29,7 +29,7 @@
  * - When replaying event history
  */
 
-/** @libar-docs-shape reference-sample */
+/** @architect-shape reference-sample */
 export interface DomainEvent {
   type: string;
   payload: unknown;

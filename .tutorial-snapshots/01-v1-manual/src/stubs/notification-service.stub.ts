@@ -1,22 +1,22 @@
-/** @libar-docs */
+/** @architect */
 
 /**
- * @libar-docs-pattern NotificationService
- * @libar-docs-status roadmap
- * @libar-docs-infra
- * @libar-docs-arch-role service
- * @libar-docs-arch-context identity
- * @libar-docs-arch-layer infrastructure
- * @libar-docs-target src/sample-sources/notification-service.ts
- * @libar-docs-since design-session-1
- * @libar-docs-uses AuthHandler
- * @libar-docs-phase 2
- * @libar-docs-release vNEXT
- * @libar-docs-brief Notification service for auth lifecycle events
- * @libar-docs-usecase "Send welcome email after user registration"
- * @libar-docs-usecase "Send login alert for new device"
- * @libar-docs-quarter Q2-2026
- * @libar-docs-extract-shapes NotificationConfig, NotificationResult
+ * @architect-pattern NotificationService
+ * @architect-status roadmap
+ * @architect-infra
+ * @architect-arch-role service
+ * @architect-arch-context identity
+ * @architect-arch-layer infrastructure
+ * @architect-target src/sample-sources/notification-service.ts
+ * @architect-since design-session-1
+ * @architect-uses AuthHandler
+ * @architect-phase 2
+ * @architect-release vNEXT
+ * @architect-brief Notification service for auth lifecycle events
+ * @architect-usecase "Send welcome email after user registration"
+ * @architect-usecase "Send login alert for new device"
+ * @architect-quarter Q2-2026
+ * @architect-extract-shapes NotificationConfig, NotificationResult
  *
  * ## NotificationService - Auth Event Notifications
  *
@@ -34,14 +34,14 @@
  * - When alerting users about new device logins
  */
 
-/** @libar-docs-shape reference-sample */
+/** @architect-shape reference-sample */
 export interface NotificationConfig {
   channel: "email" | "sms";
   template: string;
   recipientId: string;
 }
 
-/** @libar-docs-shape reference-sample */
+/** @architect-shape reference-sample */
 export interface NotificationResult {
   sent: boolean;
   channel: string;

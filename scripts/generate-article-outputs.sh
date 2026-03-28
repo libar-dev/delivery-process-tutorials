@@ -8,7 +8,7 @@ set -euo pipefail
 #   - file snapshots after each part → outputs/snapshots/<part>/
 #
 # Usage:
-#   cd /path/to/dp-mini-demo
+#   cd /path/to/architect-mini-demo
 #   ./scripts/generate-article-outputs.sh
 #
 # After running, use Claude Code with scripts/GENERATE-ARTICLE-PROMPT.md
@@ -44,7 +44,7 @@ snapshot_files() {
   fi
 
   # Copy config files
-  [ -f delivery-process.config.ts ] && cp delivery-process.config.ts "$dir/"
+  [ -f architect.config.ts ] && cp architect.config.ts "$dir/"
   [ -f tsconfig.json ] && cp tsconfig.json "$dir/"
   cp package.json "$dir/"
 
@@ -71,7 +71,7 @@ capture_environment() {
     echo "node: $(node --version)"
     echo "npm: $(npm --version)"
     echo "os: $(uname -s) $(uname -r)"
-    echo "package: $(node -e "console.log(require('./node_modules/@libar-dev/delivery-process/package.json').version)" 2>/dev/null || echo 'unknown')"
+    echo "package: $(node -e "console.log(require('./node_modules/@libar-dev/architect/package.json').version)" 2>/dev/null || echo 'unknown')"
   } > "$OUT/environment.txt"
 }
 

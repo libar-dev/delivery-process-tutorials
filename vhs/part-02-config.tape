@@ -13,12 +13,12 @@ Type "echo '═══ Part 2: Configuration ═══'"
 Enter
 Sleep 2s
 
-# Create delivery-process.config.ts
+# Create architect.config.ts
 Type "runme run create-config --filename TUTORIAL-RUNME.md"
 Enter
 Sleep 2s
 
-Type "cat delivery-process.config.ts"
+Type "cat architect.config.ts"
 Enter
 Sleep 4s
 

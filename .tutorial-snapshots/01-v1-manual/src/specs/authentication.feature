@@ -1,13 +1,13 @@
-@libar-docs
-@libar-docs-pattern:Authentication
-@libar-docs-status:roadmap
-@libar-docs-api
-@libar-docs-phase:2
-@libar-docs-release:vNEXT
-@libar-docs-uses:UserService
-@libar-docs-implements:AuthHandler
-@libar-docs-depends-on:UserRegistration
-@libar-docs-quarter:Q1-2026
+@architect
+@architect-pattern:Authentication
+@architect-status:roadmap
+@architect-api
+@architect-phase:2
+@architect-release:vNEXT
+@architect-uses:UserService
+@architect-implements:AuthHandler
+@architect-depends-on:UserRegistration
+@architect-quarter:Q1-2026
 Feature: Authentication
   As a registered user
   I want to log in to my account

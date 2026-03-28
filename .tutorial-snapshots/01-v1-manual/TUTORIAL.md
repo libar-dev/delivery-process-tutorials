@@ -27,7 +27,7 @@ The annotations live in your code. The docs regenerate in seconds. Nothing drift
 
 ```
 your-project/
-├── delivery-process.config.ts           # Process configuration
+├── architect.config.ts           # Process configuration
 ├── src/
 │   ├── sample-sources/                  # Implementation code (annotated)
 │   │   ├── user-service.ts
@@ -74,7 +74,7 @@ your-project/
 ### 1.1 Initialize the project
 
 ```bash
-mkdir dp-mini-demo && cd dp-mini-demo
+mkdir architect-mini-demo && cd architect-mini-demo
 npm init -y
 ```
 
@@ -82,7 +82,7 @@ Edit `package.json` to set `"type": "module"` and `"private": true`:
 
 ```json
 {
-  "name": "dp-mini-demo",
+  "name": "architect-mini-demo",
   "version": "1.0.0",
   "type": "module",
   "private": true
@@ -92,13 +92,13 @@ Edit `package.json` to set `"type": "module"` and `"private": true`:
 ### 1.2 Install dependencies
 
 ```bash
-npm install @libar-dev/delivery-process@pre
+npm install @libar-dev/architect@pre
 npm install -D typescript tsx
 ```
 
-> **Pre-release note:** The `@pre` dist-tag installs the latest pre-release version (currently v1.0.0-pre.0). Once 1.0.0 stable ships, this becomes `npm install @libar-dev/delivery-process`.
+> **Pre-release note:** The `@pre` dist-tag installs the latest pre-release version (currently v1.0.0-pre.3). Once 1.0.0 stable ships, this becomes `npm install @libar-dev/architect`.
 
-- `@libar-dev/delivery-process` — the documentation generation engine
+- `@libar-dev/architect` — the documentation generation engine
 - `typescript` — for type checking
 - `tsx` — for running TypeScript CLI tools directly
 
@@ -115,7 +115,7 @@ npm install -D typescript tsx
     "skipLibCheck": true,
     "outDir": "dist"
   },
-  "include": ["src/**/*.ts", "delivery-process.config.ts"]
+  "include": ["src/**/*.ts", "architect.config.ts"]
 }
 ```
 
@@ -128,7 +128,7 @@ mkdir -p src/sample-sources src/specs src/stubs
 ### Checkpoint: Part 1
 
 - [ ] `package.json` has `"type": "module"`
-- [ ] `@libar-dev/delivery-process` appears in dependencies
+- [ ] `@libar-dev/architect` appears in dependencies
 - [ ] `typescript` and `tsx` appear in devDependencies
 - [ ] `tsconfig.json` exists
 - [ ] Empty folders: `src/sample-sources/`, `src/specs/`, `src/stubs/`
@@ -139,10 +139,10 @@ mkdir -p src/sample-sources src/specs src/stubs
 
 _With the project scaffolded, you'll now tell the delivery process where to find your sources and where to write generated docs._
 
-### 2.1 Create `delivery-process.config.ts`
+### 2.1 Create `architect.config.ts`
 
 ```typescript
-import { defineConfig } from "@libar-dev/delivery-process/config";
+import { defineConfig } from "@libar-dev/architect/config";
 
 export default defineConfig({
   preset: "libar-generic",
@@ -174,10 +174,10 @@ export default defineConfig({
 | Preset | Tag Prefix | File Opt-In | Categories |
 |---|---|---|---|
 | `generic` | `@docs-` | `@docs` | 3: core, api, infra |
-| `libar-generic` | `@libar-docs-` | `@libar-docs` | 3: core, api, infra |
-| `ddd-es-cqrs` | `@libar-docs-` | `@libar-docs` | 21: full DDD taxonomy |
+| `libar-generic` | `@architect-` | `@architect` | 3: core, api, infra |
+| `ddd-es-cqrs` | `@architect-` | `@architect` | 21: full DDD taxonomy |
 
-We use `libar-generic` throughout this tutorial. It provides three categories (`core`, `api`, `infra`) with the `@libar-docs-` tag prefix.
+We use `libar-generic` throughout this tutorial. It provides three categories (`core`, `api`, `infra`) with the `@architect-` tag prefix.
 
 ### 2.4 Add npm scripts
 
@@ -186,27 +186,27 @@ Add the following to your `package.json` scripts:
 ```json
 {
   "scripts": {
-    "process:query":    "tsx ./node_modules/@libar-dev/delivery-process/dist/cli/process-api.js",
-    "process:overview": "tsx ./node_modules/@libar-dev/delivery-process/dist/cli/process-api.js overview",
-    "process:status":   "tsx ./node_modules/@libar-dev/delivery-process/dist/cli/process-api.js status",
-    "process:list":     "tsx ./node_modules/@libar-dev/delivery-process/dist/cli/process-api.js list",
-    "process:tags":     "tsx ./node_modules/@libar-dev/delivery-process/dist/cli/process-api.js tags",
-    "process:sources":  "tsx ./node_modules/@libar-dev/delivery-process/dist/cli/process-api.js sources",
-    "process:rules":    "tsx ./node_modules/@libar-dev/delivery-process/dist/cli/process-api.js rules",
-    "process:stubs":    "tsx ./node_modules/@libar-dev/delivery-process/dist/cli/process-api.js stubs",
+    "process:query":    "tsx ./node_modules/@libar-dev/architect/dist/cli/process-api.js",
+    "process:overview": "tsx ./node_modules/@libar-dev/architect/dist/cli/process-api.js overview",
+    "process:status":   "tsx ./node_modules/@libar-dev/architect/dist/cli/process-api.js status",
+    "process:list":     "tsx ./node_modules/@libar-dev/architect/dist/cli/process-api.js list",
+    "process:tags":     "tsx ./node_modules/@libar-dev/architect/dist/cli/process-api.js tags",
+    "process:sources":  "tsx ./node_modules/@libar-dev/architect/dist/cli/process-api.js sources",
+    "process:rules":    "tsx ./node_modules/@libar-dev/architect/dist/cli/process-api.js rules",
+    "process:stubs":    "tsx ./node_modules/@libar-dev/architect/dist/cli/process-api.js stubs",
 
-    "docs:patterns":       "tsx ./node_modules/@libar-dev/delivery-process/dist/cli/generate-docs.js -g patterns -f",
-    "docs:roadmap":        "tsx ./node_modules/@libar-dev/delivery-process/dist/cli/generate-docs.js -g roadmap -f",
-    "docs:reference":      "tsx ./node_modules/@libar-dev/delivery-process/dist/cli/generate-docs.js -g reference-docs -f",
-    "docs:overview":       "tsx ./node_modules/@libar-dev/delivery-process/dist/cli/generate-docs.js -g overview-rdm -f",
-    "docs:architecture":   "tsx ./node_modules/@libar-dev/delivery-process/dist/cli/generate-docs.js -g architecture -f",
-    "docs:business-rules": "tsx ./node_modules/@libar-dev/delivery-process/dist/cli/generate-docs.js -g business-rules -f",
-    "docs:taxonomy":       "tsx ./node_modules/@libar-dev/delivery-process/dist/cli/generate-docs.js -g taxonomy -f",
-    "docs:all":            "tsx ./node_modules/@libar-dev/delivery-process/dist/cli/generate-docs.js -g patterns,roadmap,reference-docs,overview-rdm,architecture,business-rules,taxonomy -f",
-    "docs:list":           "tsx ./node_modules/@libar-dev/delivery-process/dist/cli/generate-docs.js --list-generators",
+    "docs:patterns":       "tsx ./node_modules/@libar-dev/architect/dist/cli/generate-docs.js -g patterns -f",
+    "docs:roadmap":        "tsx ./node_modules/@libar-dev/architect/dist/cli/generate-docs.js -g roadmap -f",
+    "docs:reference":      "tsx ./node_modules/@libar-dev/architect/dist/cli/generate-docs.js -g reference-docs -f",
+    "docs:overview":       "tsx ./node_modules/@libar-dev/architect/dist/cli/generate-docs.js -g overview-rdm -f",
+    "docs:architecture":   "tsx ./node_modules/@libar-dev/architect/dist/cli/generate-docs.js -g architecture -f",
+    "docs:business-rules": "tsx ./node_modules/@libar-dev/architect/dist/cli/generate-docs.js -g business-rules -f",
+    "docs:taxonomy":       "tsx ./node_modules/@libar-dev/architect/dist/cli/generate-docs.js -g taxonomy -f",
+    "docs:all":            "tsx ./node_modules/@libar-dev/architect/dist/cli/generate-docs.js -g patterns,roadmap,reference-docs,overview-rdm,architecture,business-rules,taxonomy -f",
+    "docs:list":           "tsx ./node_modules/@libar-dev/architect/dist/cli/generate-docs.js --list-generators",
 
-    "lint:patterns": "tsx ./node_modules/@libar-dev/delivery-process/dist/cli/lint-patterns.js -i \"src/sample-sources/**/*.ts\"",
-    "lint:validate": "tsx ./node_modules/@libar-dev/delivery-process/dist/cli/validate-patterns.js -i \"src/sample-sources/**/*.ts\" --features \"src/specs/**/*.feature\""
+    "lint:patterns": "tsx ./node_modules/@libar-dev/architect/dist/cli/lint-patterns.js -i \"src/sample-sources/**/*.ts\"",
+    "lint:validate": "tsx ./node_modules/@libar-dev/architect/dist/cli/validate-patterns.js -i \"src/sample-sources/**/*.ts\" --features \"src/specs/**/*.feature\""
   }
 }
 ```
@@ -234,7 +234,7 @@ The Process Data API is your window into the delivery process state. We'll use i
 
 ### Checkpoint: Part 2
 
-- [ ] `delivery-process.config.ts` exists with `defineConfig()`
+- [ ] `architect.config.ts` exists with `defineConfig()`
 - [ ] `package.json` has all `process:*` and `docs:*` scripts
 - [ ] `npm run process:overview` runs without errors
 
@@ -249,7 +249,7 @@ _With configuration in place, you'll now annotate one TypeScript file and see th
 Every file that the scanner should process needs a **file opt-in marker**. For the `libar-generic` preset, this is:
 
 ```typescript
-/** @libar-docs */
+/** @architect */
 ```
 
 This must be a standalone JSDoc comment at the top of the file. Without it, the file is invisible to the scanner.
@@ -259,13 +259,13 @@ This must be a standalone JSDoc comment at the top of the file. Without it, the 
 Create `src/sample-sources/user-service.ts` with just the essential tags:
 
 ```typescript
-/** @libar-docs */
+/** @architect */
 
 /**
- * @libar-docs-pattern UserService
- * @libar-docs-status active
- * @libar-docs-core
- * @libar-docs-brief Core user lifecycle management service
+ * @architect-pattern UserService
+ * @architect-status active
+ * @architect-core
+ * @architect-brief Core user lifecycle management service
  *
  * ## UserService - User Lifecycle Management
  *
@@ -301,10 +301,10 @@ export class UserService {
 ```
 
 Four tags is all you need to get started:
-- `@libar-docs-pattern UserService` — names this pattern (required)
-- `@libar-docs-status active` — FSM status: `roadmap` → `active` → `completed`, or `deferred`
-- `@libar-docs-core` — category assignment (flag tag — no value needed)
-- `@libar-docs-brief` — short description for summary tables
+- `@architect-pattern UserService` — names this pattern (required)
+- `@architect-status active` — FSM status: `roadmap` → `active` → `completed`, or `deferred`
+- `@architect-core` — category assignment (flag tag — no value needed)
+- `@architect-brief` — short description for summary tables
 
 ### 3.3 See it detected
 
@@ -320,7 +320,7 @@ npm run process:overview
 (none yet — we haven't added a phase tag)
 ```
 
-> **What just happened:** The scanner found `user-service.ts`, detected the `@libar-docs` opt-in marker, and extracted the `UserService` pattern with status `active` in the `core` category. One file, one pattern — and it's already queryable.
+> **What just happened:** The scanner found `user-service.ts`, detected the `@architect` opt-in marker, and extracted the `UserService` pattern with status `active` in the `core` category. One file, one pattern — and it's already queryable.
 
 Verify which files the scanner found:
 
@@ -348,10 +348,10 @@ npm run process:sources
 
 You created one annotated file and proved the scanner detects it. The minimum viable annotation is:
 
-1. `@libar-docs` — file opt-in marker
-2. `@libar-docs-pattern Name` — names the pattern
-3. `@libar-docs-status` — FSM status
-4. A category flag (`@libar-docs-core`, `-api`, or `-infra`)
+1. `@architect` — file opt-in marker
+2. `@architect-pattern Name` — names the pattern
+3. `@architect-status` — FSM status
+4. A category flag (`@architect-core`, `-api`, or `-infra`)
 
 Next, you'll add tags that make the documentation richer.
 
@@ -363,21 +363,21 @@ _In Part 3 you created a working annotation with 4 tags. Now you'll layer in arc
 
 ### 4.1 Add architecture tags
 
-Add these three tags to the JSDoc block in `user-service.ts`, after `@libar-docs-brief`:
+Add these three tags to the JSDoc block in `user-service.ts`, after `@architect-brief`:
 
 ```typescript
- * @libar-docs-arch-role service
- * @libar-docs-arch-context identity
- * @libar-docs-arch-layer application
+ * @architect-arch-role service
+ * @architect-arch-context identity
+ * @architect-arch-layer application
 ```
 
 Architecture tags place your pattern in a structured topology:
 
 | Tag | Example | Purpose |
 |---|---|---|
-| `@libar-docs-arch-role` | `service` | Component type: `service`, `infrastructure`, etc. |
-| `@libar-docs-arch-context` | `identity` | Bounded context (creates diagram subgraphs) |
-| `@libar-docs-arch-layer` | `application` | Architecture layer: `domain`, `application`, `infrastructure` |
+| `@architect-arch-role` | `service` | Component type: `service`, `infrastructure`, etc. |
+| `@architect-arch-context` | `identity` | Bounded context (creates diagram subgraphs) |
+| `@architect-arch-layer` | `application` | Architecture layer: `domain`, `application`, `infrastructure` |
 
 Run `npm run process:tags` and you'll see architecture metadata now appears in the tag usage report — `arch-role: service`, `arch-context: identity`, `arch-layer: application`.
 
@@ -388,20 +388,20 @@ Run `npm run process:tags` and you'll see architecture metadata now appears in t
 Add these tags to `user-service.ts`:
 
 ```typescript
- * @libar-docs-usecase "Register a new user account via the signup form"
- * @libar-docs-usecase "Look up a user by ID for profile display"
- * @libar-docs-usecase "Deactivate a compromised user account"
- * @libar-docs-quarter Q1-2026
- * @libar-docs-phase 1
- * @libar-docs-release v0.1.0
+ * @architect-usecase "Register a new user account via the signup form"
+ * @architect-usecase "Look up a user by ID for profile display"
+ * @architect-usecase "Deactivate a compromised user account"
+ * @architect-quarter Q1-2026
+ * @architect-phase 1
+ * @architect-release v0.1.0
 ```
 
 | Tag | Example | Purpose |
 |---|---|---|
-| `@libar-docs-usecase` | `"Register a new user..."` | Use cases (quoted, repeatable) |
-| `@libar-docs-quarter` | `Q1-2026` | Timeline tracking |
-| `@libar-docs-phase` | `1` | Roadmap phase number |
-| `@libar-docs-release` | `v0.1.0` | Target release version |
+| `@architect-usecase` | `"Register a new user..."` | Use cases (quoted, repeatable) |
+| `@architect-quarter` | `Q1-2026` | Timeline tracking |
+| `@architect-phase` | `1` | Roadmap phase number |
+| `@architect-release` | `v0.1.0` | Target release version |
 
 ```bash
 npm run process:overview
@@ -415,20 +415,20 @@ npm run process:overview
 Phase 1: Inception (1 active)
 ```
 
-> **What just happened:** The `@libar-docs-phase 1` tag assigns UserService to Phase 1. Phase names like "Inception" come from the **6-phase-standard** workflow built into the preset. The six phases are: Inception, Elaboration, Session, Construction, Validation, Retrospective.
+> **What just happened:** The `@architect-phase 1` tag assigns UserService to Phase 1. Phase names like "Inception" come from the **6-phase-standard** workflow built into the preset. The six phases are: Inception, Elaboration, Session, Construction, Validation, Retrospective.
 
 ### 4.3 Add shape extraction
 
 Shape extraction pulls TypeScript interfaces into your generated docs. Add this tag to the pattern's JSDoc block:
 
 ```typescript
- * @libar-docs-extract-shapes UserRecord
+ * @architect-extract-shapes UserRecord
 ```
 
 Then add the interface above the class, with its own shape tag:
 
 ```typescript
-/** @libar-docs-shape reference-sample */
+/** @architect-shape reference-sample */
 export interface UserRecord {
   id: string;
   email: string;
@@ -438,8 +438,8 @@ export interface UserRecord {
 
 | Tag | Example | Purpose |
 |---|---|---|
-| `@libar-docs-extract-shapes` | `UserRecord` | Extract named TypeScript types into docs |
-| `@libar-docs-shape` | `reference-sample` | Mark an interface for shape discovery (optional group name) |
+| `@architect-extract-shapes` | `UserRecord` | Extract named TypeScript types into docs |
+| `@architect-shape` | `reference-sample` | Mark an interface for shape discovery (optional group name) |
 
 ```bash
 npm run process:overview
@@ -447,7 +447,7 @@ npm run process:overview
 
 The pattern count increases — `UserRecord` now appears as a separate shape pattern in the registry.
 
-> **Note:** `@libar-docs-shape` on an interface creates a lightweight "Shape" entry. The linter will flag these for missing `@libar-docs-pattern` names, which is expected and harmless.
+> **Note:** `@architect-shape` on an interface creates a lightweight "Shape" entry. The linter will flag these for missing `@architect-pattern` names, which is expected and harmless.
 
 ### 4.4 Full tag reference
 
@@ -457,40 +457,40 @@ Here's the complete tag reference for TypeScript annotations. You've now used ev
 
 | Tag | Example | Purpose |
 |---|---|---|
-| `@libar-docs-pattern` | `UserService` | Names this pattern (required) |
-| `@libar-docs-status` | `active` | FSM status: `roadmap` → `active` → `completed`, or `deferred` |
-| `@libar-docs-core` | _(flag)_ | Category assignment. Also: `@libar-docs-api`, `@libar-docs-infra` |
+| `@architect-pattern` | `UserService` | Names this pattern (required) |
+| `@architect-status` | `active` | FSM status: `roadmap` → `active` → `completed`, or `deferred` |
+| `@architect-core` | _(flag)_ | Category assignment. Also: `@architect-api`, `@architect-infra` |
 
 **Architecture:**
 
 | Tag | Example | Purpose |
 |---|---|---|
-| `@libar-docs-arch-role` | `service` | Component type |
-| `@libar-docs-arch-context` | `identity` | Bounded context |
-| `@libar-docs-arch-layer` | `application` | Architecture layer |
+| `@architect-arch-role` | `service` | Component type |
+| `@architect-arch-context` | `identity` | Bounded context |
+| `@architect-arch-layer` | `application` | Architecture layer |
 
 **Enrichment:**
 
 | Tag | Example | Purpose |
 |---|---|---|
-| `@libar-docs-brief` | `Core user lifecycle...` | Short description for summary tables |
-| `@libar-docs-usecase` | `"Register a new user..."` | Use cases (quoted, repeatable) |
-| `@libar-docs-quarter` | `Q1-2026` | Timeline tracking |
-| `@libar-docs-phase` | `1` | Roadmap phase number |
-| `@libar-docs-release` | `v0.1.0` | Target release version |
+| `@architect-brief` | `Core user lifecycle...` | Short description for summary tables |
+| `@architect-usecase` | `"Register a new user..."` | Use cases (quoted, repeatable) |
+| `@architect-quarter` | `Q1-2026` | Timeline tracking |
+| `@architect-phase` | `1` | Roadmap phase number |
+| `@architect-release` | `v0.1.0` | Target release version |
 
 **Shapes:**
 
 | Tag | Example | Purpose |
 |---|---|---|
-| `@libar-docs-extract-shapes` | `UserRecord` | Extract named types into docs |
-| `@libar-docs-shape` | `reference-sample` | Mark an interface for shape discovery |
+| `@architect-extract-shapes` | `UserRecord` | Extract named types into docs |
+| `@architect-shape` | `reference-sample` | Mark an interface for shape discovery |
 
 ### Checkpoint: Part 4
 
 - [ ] `user-service.ts` has architecture tags (`arch-role`, `arch-context`, `arch-layer`)
 - [ ] `user-service.ts` has enrichment tags (`usecase`, `quarter`, `phase`, `release`)
-- [ ] `user-service.ts` has shape extraction (`extract-shapes` + `@libar-docs-shape` on interface)
+- [ ] `user-service.ts` has shape extraction (`extract-shapes` + `@architect-shape` on interface)
 - [ ] `npm run process:overview` shows "Phase 1: Inception"
 
 ### Recap: Part 4
@@ -514,10 +514,10 @@ _In Part 4, you enriched a single file with architecture and enrichment tags. No
 Add these tags to `user-service.ts`:
 
 ```typescript
- * @libar-docs-used-by AuthHandler
- * @libar-docs-uses EventStore
- * @libar-docs-depends-on EventStore
- * @libar-docs-see-also AuthHandler, EventStore
+ * @architect-used-by AuthHandler
+ * @architect-uses EventStore
+ * @architect-depends-on EventStore
+ * @architect-see-also AuthHandler, EventStore
 ```
 
 These reference patterns that don't exist yet — that's intentional. The system will track these as pending references until you create the matching files.
@@ -526,38 +526,38 @@ These reference patterns that don't exist yet — that's intentional. The system
 
 | Tag | Example | Purpose |
 |---|---|---|
-| `@libar-docs-uses` | `EventStore` | Direct dependency (solid arrow `-->` in diagrams) |
-| `@libar-docs-used-by` | `AuthHandler` | Reverse dependency |
-| `@libar-docs-depends-on` | `EventStore` | Roadmap sequencing (dashed arrow `-.->`) |
-| `@libar-docs-enables` | `UserService` | Reverse sequencing |
-| `@libar-docs-see-also` | `AuthHandler, EventStore` | Cross-reference without dependency |
+| `@architect-uses` | `EventStore` | Direct dependency (solid arrow `-->` in diagrams) |
+| `@architect-used-by` | `AuthHandler` | Reverse dependency |
+| `@architect-depends-on` | `EventStore` | Roadmap sequencing (dashed arrow `-.->`) |
+| `@architect-enables` | `UserService` | Reverse sequencing |
+| `@architect-see-also` | `AuthHandler, EventStore` | Cross-reference without dependency |
 
 ### 5.2 The full user-service.ts
 
 After all the additions from Parts 3–5, your file should look like this:
 
 ```typescript
-/** @libar-docs */
+/** @architect */
 
 /**
- * @libar-docs-pattern UserService
- * @libar-docs-status active
- * @libar-docs-core
- * @libar-docs-arch-role service
- * @libar-docs-arch-context identity
- * @libar-docs-arch-layer application
- * @libar-docs-used-by AuthHandler
- * @libar-docs-uses EventStore
- * @libar-docs-extract-shapes UserRecord
- * @libar-docs-phase 1
- * @libar-docs-release v0.1.0
- * @libar-docs-brief Core user lifecycle management service
- * @libar-docs-usecase "Register a new user account via the signup form"
- * @libar-docs-usecase "Look up a user by ID for profile display"
- * @libar-docs-usecase "Deactivate a compromised user account"
- * @libar-docs-quarter Q1-2026
- * @libar-docs-depends-on EventStore
- * @libar-docs-see-also AuthHandler, EventStore
+ * @architect-pattern UserService
+ * @architect-status active
+ * @architect-core
+ * @architect-arch-role service
+ * @architect-arch-context identity
+ * @architect-arch-layer application
+ * @architect-used-by AuthHandler
+ * @architect-uses EventStore
+ * @architect-extract-shapes UserRecord
+ * @architect-phase 1
+ * @architect-release v0.1.0
+ * @architect-brief Core user lifecycle management service
+ * @architect-usecase "Register a new user account via the signup form"
+ * @architect-usecase "Look up a user by ID for profile display"
+ * @architect-usecase "Deactivate a compromised user account"
+ * @architect-quarter Q1-2026
+ * @architect-depends-on EventStore
+ * @architect-see-also AuthHandler, EventStore
  *
  * ## UserService - User Lifecycle Management
  *
@@ -570,7 +570,7 @@ After all the additions from Parts 3–5, your file should look like this:
  * - When deactivating user accounts
  */
 
-/** @libar-docs-shape reference-sample */
+/** @architect-shape reference-sample */
 export interface UserRecord {
   id: string;
   email: string;
@@ -604,25 +604,25 @@ export class UserService {
 Create `src/sample-sources/auth-handler.ts`:
 
 ```typescript
-/** @libar-docs */
+/** @architect */
 
 /**
- * @libar-docs-pattern AuthHandler
- * @libar-docs-status roadmap
- * @libar-docs-api
- * @libar-docs-arch-role service
- * @libar-docs-arch-context identity
- * @libar-docs-arch-layer application
- * @libar-docs-uses UserService
- * @libar-docs-extract-shapes AuthResult
- * @libar-docs-phase 2
- * @libar-docs-release vNEXT
- * @libar-docs-brief Authentication and session management handler
- * @libar-docs-usecase "Authenticate a user with email and password"
- * @libar-docs-usecase "Validate an active session token"
- * @libar-docs-depends-on UserService
- * @libar-docs-quarter Q1-2026
- * @libar-docs-see-also UserService
+ * @architect-pattern AuthHandler
+ * @architect-status roadmap
+ * @architect-api
+ * @architect-arch-role service
+ * @architect-arch-context identity
+ * @architect-arch-layer application
+ * @architect-uses UserService
+ * @architect-extract-shapes AuthResult
+ * @architect-phase 2
+ * @architect-release vNEXT
+ * @architect-brief Authentication and session management handler
+ * @architect-usecase "Authenticate a user with email and password"
+ * @architect-usecase "Validate an active session token"
+ * @architect-depends-on UserService
+ * @architect-quarter Q1-2026
+ * @architect-see-also UserService
  *
  * ## AuthHandler - Authentication & Sessions
  *
@@ -634,7 +634,7 @@ Create `src/sample-sources/auth-handler.ts`:
  * - When creating or validating sessions
  */
 
-/** @libar-docs-shape reference-sample */
+/** @architect-shape reference-sample */
 export interface AuthResult {
   success: boolean;
   sessionId?: string;
@@ -658,25 +658,25 @@ export class AuthHandler {
 Create `src/sample-sources/event-store.ts`:
 
 ```typescript
-/** @libar-docs */
+/** @architect */
 
 /**
- * @libar-docs-pattern EventStore
- * @libar-docs-status deferred
- * @libar-docs-infra
- * @libar-docs-arch-role infrastructure
- * @libar-docs-arch-context persistence
- * @libar-docs-arch-layer infrastructure
- * @libar-docs-used-by UserService
- * @libar-docs-extract-shapes DomainEvent
- * @libar-docs-phase 3
- * @libar-docs-release vNEXT
- * @libar-docs-brief Append-only event store for domain event persistence
- * @libar-docs-usecase "Persist a domain event after a user action"
- * @libar-docs-usecase "Replay events for audit trail or debugging"
- * @libar-docs-quarter Q2-2026
- * @libar-docs-enables UserService
- * @libar-docs-see-also UserService
+ * @architect-pattern EventStore
+ * @architect-status deferred
+ * @architect-infra
+ * @architect-arch-role infrastructure
+ * @architect-arch-context persistence
+ * @architect-arch-layer infrastructure
+ * @architect-used-by UserService
+ * @architect-extract-shapes DomainEvent
+ * @architect-phase 3
+ * @architect-release vNEXT
+ * @architect-brief Append-only event store for domain event persistence
+ * @architect-usecase "Persist a domain event after a user action"
+ * @architect-usecase "Replay events for audit trail or debugging"
+ * @architect-quarter Q2-2026
+ * @architect-enables UserService
+ * @architect-see-also UserService
  *
  * ## EventStore - Append-Only Event Storage
  *
@@ -689,7 +689,7 @@ Create `src/sample-sources/event-store.ts`:
  * - When replaying event history
  */
 
-/** @libar-docs-shape reference-sample */
+/** @architect-shape reference-sample */
 export interface DomainEvent {
   type: string;
   payload: unknown;
@@ -783,7 +783,7 @@ Before moving on, verify:
 
 ### Recap: Part 5
 
-- Multiple sources with `@libar-docs-uses` and `@libar-docs-depends-on` create a live dependency graph
+- Multiple sources with `@architect-uses` and `@architect-depends-on` create a live dependency graph
 - The `process:overview` blocking report surfaces dependency chains automatically
 - `dep-tree` shows recursive dependencies for any pattern
 - Pattern names in relationship tags must match exactly (case-sensitive)
@@ -814,13 +814,13 @@ Running generator: patterns
 **`PATTERNS.md`** is the pattern registry — an index of all patterns with:
 - Progress bar and status counts (completed / active / planned)
 - Categorized listing (API, Core, Infra, Shape)
-- Brief descriptions from `@libar-docs-brief`
+- Brief descriptions from `@architect-brief`
 - A Mermaid dependency graph showing `uses` (solid), `depends-on` (dashed), and `implements` (dotted) relationships
 
 **`patterns/*.md`** are per-pattern detail pages with:
 - Status, category, phase, quarter metadata table
 - Description from JSDoc markdown
-- Use cases from `@libar-docs-usecase` tags
+- Use cases from `@architect-usecase` tags
 - Dependencies list
 
 ### 6.2 Generate the Roadmap
@@ -842,7 +842,7 @@ Running generator: roadmap
 - Phase navigation table with per-phase completion percentages
 - Per-phase sections listing patterns with descriptions
 
-Phase names come from the default **6-phase-standard** workflow: Inception, Elaboration, Session, Construction, Validation, Retrospective. Patterns are assigned to phases via `@libar-docs-phase N`.
+Phase names come from the default **6-phase-standard** workflow: Inception, Elaboration, Session, Construction, Validation, Retrospective. Patterns are assigned to phases via `@architect-phase N`.
 
 ### Checkpoint: Part 6
 
@@ -869,18 +869,18 @@ _TypeScript annotations describe what exists. Gherkin features describe what nee
 
 ### 7.2 Create `src/specs/user-registration.feature`
 
-> **Important:** Gherkin features must include the `@libar-docs` opt-in tag. Without it, the scanner ignores the file entirely — just like TypeScript files.
+> **Important:** Gherkin features must include the `@architect` opt-in tag. Without it, the scanner ignores the file entirely — just like TypeScript files.
 
 ```gherkin
-@libar-docs
-@libar-docs-pattern:UserRegistration
-@libar-docs-status:roadmap
-@libar-docs-core
-@libar-docs-phase:1
-@libar-docs-release:v0.1.0
-@libar-docs-uses:UserService
-@libar-docs-implements:UserService
-@libar-docs-quarter:Q1-2026
+@architect
+@architect-pattern:UserRegistration
+@architect-status:roadmap
+@architect-core
+@architect-phase:1
+@architect-release:v0.1.0
+@architect-uses:UserService
+@architect-implements:UserService
+@architect-quarter:Q1-2026
 Feature: User Registration
   As a new user
   I want to register an account
@@ -943,17 +943,17 @@ Feature: User Registration
 
 | Syntax | Context | Example |
 |---|---|---|
-| Space-separated | TypeScript JSDoc | `@libar-docs-pattern UserService` |
-| Colon-separated | Gherkin tags | `@libar-docs-pattern:UserRegistration` |
+| Space-separated | TypeScript JSDoc | `@architect-pattern UserService` |
+| Colon-separated | Gherkin tags | `@architect-pattern:UserRegistration` |
 
 Key feature-level tags:
 
 | Tag | Purpose |
 |---|---|
-| `@libar-docs` | **Required.** Opts the file into scanning. |
-| `@libar-docs-pattern:UserRegistration` | Names this as a pattern. |
-| `@libar-docs-implements:UserService` | Links this spec to the TypeScript pattern it specifies (dotted arrows in diagrams). |
-| `@libar-docs-depends-on:UserRegistration` | Roadmap sequencing between specs. |
+| `@architect` | **Required.** Opts the file into scanning. |
+| `@architect-pattern:UserRegistration` | Names this as a pattern. |
+| `@architect-implements:UserService` | Links this spec to the TypeScript pattern it specifies (dotted arrows in diagrams). |
+| `@architect-depends-on:UserRegistration` | Roadmap sequencing between specs. |
 
 **Background: Deliverables** — A data table under `Background:` that tracks deliverables. Each row specifies a deliverable name, its status, and the source file where it will be implemented. These show up in roadmap tracking and pattern detail pages.
 
@@ -970,16 +970,16 @@ Key feature-level tags:
 Create `src/specs/authentication.feature`:
 
 ```gherkin
-@libar-docs
-@libar-docs-pattern:Authentication
-@libar-docs-status:roadmap
-@libar-docs-api
-@libar-docs-phase:2
-@libar-docs-release:vNEXT
-@libar-docs-uses:UserService
-@libar-docs-implements:AuthHandler
-@libar-docs-depends-on:UserRegistration
-@libar-docs-quarter:Q1-2026
+@architect
+@architect-pattern:Authentication
+@architect-status:roadmap
+@architect-api
+@architect-phase:2
+@architect-release:vNEXT
+@architect-uses:UserService
+@architect-implements:AuthHandler
+@architect-depends-on:UserRegistration
+@architect-quarter:Q1-2026
 Feature: Authentication
   As a registered user
   I want to log in to my account
@@ -1017,8 +1017,8 @@ Feature: Authentication
 ```
 
 This feature demonstrates cross-pattern traceability:
-- `@libar-docs-implements:AuthHandler` — links this spec to the TypeScript implementation
-- `@libar-docs-depends-on:UserRegistration` — sequencing between specs
+- `@architect-implements:AuthHandler` — links this spec to the TypeScript implementation
+- `@architect-depends-on:UserRegistration` — sequencing between specs
 
 ### 7.5 Query business rules
 
@@ -1115,7 +1115,7 @@ The Gherkin features added 2 more main patterns (UserRegistration, Authenticatio
 - TypeScript owns implementation metadata: uses, used-by, shapes, architecture
 - Together they form a complete picture — neither duplicates the other
 - `Rule:` blocks with `**Invariant:**`/`**Rationale:**` become queryable business rules
-- Gherkin tags use colon syntax (`@libar-docs-pattern:Name`), TypeScript uses spaces
+- Gherkin tags use colon syntax (`@architect-pattern:Name`), TypeScript uses spaces
 
 ---
 
@@ -1126,25 +1126,25 @@ _Design stubs describe a pattern's design before the implementation exists. They
 ### 8.1 Create `src/stubs/notification-service.stub.ts`
 
 ```typescript
-/** @libar-docs */
+/** @architect */
 
 /**
- * @libar-docs-pattern NotificationService
- * @libar-docs-status roadmap
- * @libar-docs-infra
- * @libar-docs-arch-role service
- * @libar-docs-arch-context identity
- * @libar-docs-arch-layer infrastructure
- * @libar-docs-target src/sample-sources/notification-service.ts
- * @libar-docs-since design-session-1
- * @libar-docs-uses AuthHandler
- * @libar-docs-phase 2
- * @libar-docs-release vNEXT
- * @libar-docs-brief Notification service for auth lifecycle events
- * @libar-docs-usecase "Send welcome email after user registration"
- * @libar-docs-usecase "Send login alert for new device"
- * @libar-docs-quarter Q2-2026
- * @libar-docs-extract-shapes NotificationConfig, NotificationResult
+ * @architect-pattern NotificationService
+ * @architect-status roadmap
+ * @architect-infra
+ * @architect-arch-role service
+ * @architect-arch-context identity
+ * @architect-arch-layer infrastructure
+ * @architect-target src/sample-sources/notification-service.ts
+ * @architect-since design-session-1
+ * @architect-uses AuthHandler
+ * @architect-phase 2
+ * @architect-release vNEXT
+ * @architect-brief Notification service for auth lifecycle events
+ * @architect-usecase "Send welcome email after user registration"
+ * @architect-usecase "Send login alert for new device"
+ * @architect-quarter Q2-2026
+ * @architect-extract-shapes NotificationConfig, NotificationResult
  *
  * ## NotificationService - Auth Event Notifications
  *
@@ -1162,14 +1162,14 @@ _Design stubs describe a pattern's design before the implementation exists. They
  * - When alerting users about new device logins
  */
 
-/** @libar-docs-shape reference-sample */
+/** @architect-shape reference-sample */
 export interface NotificationConfig {
   channel: "email" | "sms";
   template: string;
   recipientId: string;
 }
 
-/** @libar-docs-shape reference-sample */
+/** @architect-shape reference-sample */
 export interface NotificationResult {
   sent: boolean;
   channel: string;
@@ -1181,8 +1181,8 @@ export interface NotificationResult {
 
 | Tag | Example | Purpose |
 |---|---|---|
-| `@libar-docs-target` | `src/sample-sources/notification-service.ts` | Path where the real implementation will live. The resolver checks if this file exists. |
-| `@libar-docs-since` | `design-session-1` | Identifies which design session created the stub. |
+| `@architect-target` | `src/sample-sources/notification-service.ts` | Path where the real implementation will live. The resolver checks if this file exists. |
+| `@architect-since` | `design-session-1` | Identifies which design session created the stub. |
 
 ### 8.3 Query stubs
 
@@ -1216,15 +1216,15 @@ npm run process:stubs
 
 ### Checkpoint: Part 8
 
-- [ ] `src/stubs/notification-service.stub.ts` exists with `@libar-docs-target` and `@libar-docs-since`
+- [ ] `src/stubs/notification-service.stub.ts` exists with `@architect-target` and `@architect-since`
 - [ ] `npm run process:stubs` shows the stub with `targetExists: false`
 - [ ] `npm run process:sources` shows 1 stub file
 
 ### Recap: Part 8
 
 - Stubs document API contracts before implementation exists
-- `@libar-docs-target` tracks where the real file will live
-- `@libar-docs-since` records which design session created the stub
+- `@architect-target` tracks where the real file will live
+- `@architect-since` records which design session created the stub
 - The stubs query shows resolution status — unresolved stubs are visible work items
 
 ---
@@ -1235,10 +1235,10 @@ _You have all source types in place: TypeScript, Gherkin, and stubs. Now you'll 
 
 ### 9.1 Add referenceDocConfigs to configuration
 
-Update `delivery-process.config.ts` to add the `referenceDocConfigs` array:
+Update `architect.config.ts` to add the `referenceDocConfigs` array:
 
 ```typescript
-import { defineConfig } from "@libar-dev/delivery-process/config";
+import { defineConfig } from "@libar-dev/architect/config";
 
 export default defineConfig({
   preset: "libar-generic",
@@ -1255,7 +1255,6 @@ export default defineConfig({
     {
       title: "Identity & Persistence Reference",
       conventionTags: [],
-      shapeSources: ["src/sample-sources/**/*.ts"],
       behaviorCategories: ["core", "api", "infra"],
       diagramScopes: [
         {
@@ -1279,12 +1278,11 @@ export default defineConfig({
 | Field | Purpose |
 |---|---|
 | `title` | Document heading |
-| `conventionTags` | Convention tags to include (from `@libar-docs-convention`-tagged files) |
-| `shapeSources` | Glob patterns for TypeScript shape extraction |
+| `conventionTags` | Convention tags to include (from `@architect-convention`-tagged files) |
 | `behaviorCategories` | Category filters — which patterns' descriptions to include |
 | `diagramScopes` | Scoped Mermaid diagrams with bounded context filtering |
 | `claudeMdSection` | Target directory under `_claude-md/` for AI-consumption summary |
-| `docsFilename` | Output filename in `docs/` for the detailed version |
+| `docsFilename` | Output filename in `reference/` for the detailed version |
 | `claudeMdFilename` | Output filename in `_claude-md/` for the compact version |
 
 **Diagram scope options:**
@@ -1381,7 +1379,7 @@ npm run lint:patterns
 ```
 src/sample-sources/user-service.ts
   34:1  error    missing-pattern-name  Pattern missing explicit name...
-  34:1  warning  missing-status        No @libar-docs-status found...
+  34:1  warning  missing-status        No @architect-status found...
 
 src/sample-sources/event-store.ts
   32:1  error    missing-pattern-name  Pattern missing explicit name...
@@ -1392,11 +1390,11 @@ src/sample-sources/auth-handler.ts
 ✗ 3 errors, 6 warnings, 3 info
 ```
 
-The 3 errors are from `@libar-docs-shape` annotations on interfaces — these are lightweight shape entries that lack their own `@libar-docs-pattern` names. This is expected. The shapes are discovered through the `@libar-docs-extract-shapes` tag on the parent pattern, so they don't need independent pattern names.
+The 3 errors are from `@architect-shape` annotations on interfaces — these are lightweight shape entries that lack their own `@architect-pattern` names. This is expected. The shapes are discovered through the `@architect-extract-shapes` tag on the parent pattern, so they don't need independent pattern names.
 
 ### Checkpoint: Part 9
 
-- [ ] `delivery-process.config.ts` has `referenceDocConfigs`
+- [ ] `architect.config.ts` has `referenceDocConfigs`
 - [ ] `npm run docs:all` writes 26 files to `docs-generated/`
 - [ ] `docs-generated/docs/IDENTITY-PERSISTENCE-REFERENCE.md` exists
 - [ ] `docs-generated/_claude-md/reference/` has the compact version
@@ -1540,10 +1538,10 @@ Everything was derived from annotations in your code — nothing was hand-author
 
 ### Resources
 
-- [Package README](https://www.npmjs.com/package/@libar-dev/delivery-process) — Full documentation and value proposition
-- `node_modules/@libar-dev/delivery-process/docs/INDEX.md` — Complete docs index with section links and reading paths
-- `node_modules/@libar-dev/delivery-process/docs/PROCESS-API.md` — All 26+ API methods
-- `node_modules/@libar-dev/delivery-process/docs/ANNOTATION-GUIDE.md` — Complete annotation reference with shape extraction modes
+- [Package README](https://www.npmjs.com/package/@libar-dev/architect) — Full documentation and value proposition
+- `node_modules/@libar-dev/architect/docs/INDEX.md` — Complete docs index with section links and reading paths
+- `node_modules/@libar-dev/architect/docs/PROCESS-API.md` — All 26+ API methods
+- `node_modules/@libar-dev/architect/docs/ANNOTATION-GUIDE.md` — Complete annotation reference with shape extraction modes
 
 ---
 
@@ -1551,13 +1549,13 @@ Everything was derived from annotations in your code — nothing was hand-author
 
 ### "npm run process:overview shows 0 patterns"
 
-- Check that your source file has `/** @libar-docs */` as a **standalone JSDoc comment** at the top of the file — not inside a class or function
-- Check that `delivery-process.config.ts` has the correct glob pattern matching your file path
+- Check that your source file has `/** @architect */` as a **standalone JSDoc comment** at the top of the file — not inside a class or function
+- Check that `architect.config.ts` has the correct glob pattern matching your file path
 - Run `npm run process:sources` to see which files the scanner actually found
 
 ### "Lint shows errors for shape patterns"
 
-This is expected. `@libar-docs-shape` on interfaces creates lightweight shape entries in the registry. The linter flags these for missing `@libar-docs-pattern` names. These are informational, not blocking — the shapes are discovered through the parent pattern's `@libar-docs-extract-shapes` tag.
+This is expected. `@architect-shape` on interfaces creates lightweight shape entries in the registry. The linter flags these for missing `@architect-pattern` names. These are informational, not blocking — the shapes are discovered through the parent pattern's `@architect-extract-shapes` tag.
 
 ### "Phase names don't match expectations"
 
@@ -1568,17 +1566,17 @@ Phase numbers map to the **6-phase-standard** workflow:
 
 - Check that all source directories have files: `src/sample-sources/`, `src/specs/`, `src/stubs/`
 - Run `npm run process:sources` to verify all file types are detected
-- Ensure `referenceDocConfigs` is present in `delivery-process.config.ts` for reference doc generation
+- Ensure `referenceDocConfigs` is present in `architect.config.ts` for reference doc generation
 
 ### "dep-tree shows no dependencies"
 
 - Verify both the source and target patterns exist: `npm run process:query -- list --names-only`
-- Check for typos in `@libar-docs-uses` and `@libar-docs-depends-on` values — pattern names are case-sensitive
+- Check for typos in `@architect-uses` and `@architect-depends-on` values — pattern names are case-sensitive
 
 ### "Gherkin feature not detected"
 
-- Ensure `@libar-docs` appears as the first tag above `Feature:` (no other tags before it)
-- Tags use colon syntax in Gherkin: `@libar-docs-pattern:Name` (not `@libar-docs-pattern Name`)
+- Ensure `@architect` appears as the first tag above `Feature:` (no other tags before it)
+- Tags use colon syntax in Gherkin: `@architect-pattern:Name` (not `@architect-pattern Name`)
 - Verify `sources.features` in config matches your file path
 
 ### FAQ: Why annotations instead of a separate config file?
@@ -1626,9 +1624,9 @@ This is the complete checklist of everything a project setup command would creat
 
 ### Files
 
-- [ ] `package.json` — ESM, dependency on `@libar-dev/delivery-process@pre`, devDependencies on `typescript` + `tsx`, all npm scripts
+- [ ] `package.json` — ESM, dependency on `@libar-dev/architect@pre`, devDependencies on `typescript` + `tsx`, all npm scripts
 - [ ] `tsconfig.json` — ES2022, NodeNext, strict, includes src/ and config
-- [ ] `delivery-process.config.ts` — Preset, sources (typescript + features + stubs), output directory
+- [ ] `architect.config.ts` — Preset, sources (typescript + features + stubs), output directory
 
 ### Directories
 
@@ -1657,8 +1655,8 @@ This is the complete checklist of everything a project setup command would creat
 
 | Tag | Format | Example |
 |---|---|---|
-| `@libar-docs` | file opt-in (standalone JSDoc or Gherkin tag) | `/** @libar-docs */` |
-| `@libar-docs-pattern` | `Name` | `@libar-docs-pattern UserService` |
+| `@architect` | file opt-in (standalone JSDoc or Gherkin tag) | `/** @architect */` |
+| `@architect-pattern` | `Name` | `@architect-pattern UserService` |
 
 ### Status FSM
 
@@ -1681,5 +1679,5 @@ deferred  roadmap (blocked)
 
 | Context | Syntax | Example |
 |---|---|---|
-| TypeScript JSDoc | Space-separated | `@libar-docs-pattern UserService` |
-| Gherkin tags | Colon-separated | `@libar-docs-pattern:UserService` |
+| TypeScript JSDoc | Space-separated | `@architect-pattern UserService` |
+| Gherkin tags | Colon-separated | `@architect-pattern:UserService` |

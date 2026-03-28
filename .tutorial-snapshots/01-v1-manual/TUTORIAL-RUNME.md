@@ -8,7 +8,7 @@ shell: bash
 
 # Context Engineering for AI-Assisted Codebases: Interactive Tutorial
 
-> A hands-on Runme notebook for `@libar-dev/delivery-process` -- annotate your TypeScript, generate living docs, and give AI agents structured context instead of stale Markdown.
+> A hands-on Runme notebook for `@libar-dev/architect` -- annotate your TypeScript, generate living docs, and give AI agents structured context instead of stale Markdown.
 
 **How to use this notebook:**
 
@@ -59,7 +59,7 @@ echo "=== package.json ==="
 node -e "const p=JSON.parse(require('fs').readFileSync('package.json','utf8')); console.log('name:', p.name); console.log('type:', p.type); console.log('private:', p.private)"
 echo ""
 echo "=== Dependencies ==="
-npm ls @libar-dev/delivery-process --depth=0 2>/dev/null || echo "(install with: npm install)"
+npm ls @libar-dev/architect --depth=0 2>/dev/null || echo "(install with: npm install)"
 echo ""
 echo "=== Dev Dependencies ==="
 npm ls typescript tsx --depth=0 2>/dev/null || echo "(install with: npm install)"
@@ -86,7 +86,7 @@ npm install
 echo "=== Part 1 Checkpoint ==="
 node -e "const p=JSON.parse(require('fs').readFileSync('package.json','utf8')); \
   console.log('type: module?', p.type === 'module' ? 'PASS' : 'FAIL'); \
-  console.log('delivery-process?', p.dependencies?.['@libar-dev/delivery-process'] ? 'PASS' : 'FAIL'); \
+  console.log('architect?', p.dependencies?.['@libar-dev/architect'] ? 'PASS' : 'FAIL'); \
   console.log('typescript?', p.devDependencies?.typescript ? 'PASS' : 'FAIL'); \
   console.log('tsx?', p.devDependencies?.tsx ? 'PASS' : 'FAIL')"
 echo ""
@@ -102,12 +102,12 @@ done
 
 > **What you learn:** Configure sources, output, and presets.
 
-### 2.1 Inspect `delivery-process.config.ts`
+### 2.1 Inspect `architect.config.ts`
 
 The configuration file tells the system where to find sources and write output:
 
 ```bash {"closeTerminalOnSuccess":"false","name":"show-config"}
-cat delivery-process.config.ts
+cat architect.config.ts
 ```
 
 Key fields:
@@ -126,8 +126,8 @@ Key fields:
 | Preset | Tag Prefix | File Opt-In | Categories |
 |---|---|---|---|
 | `generic` | `@docs-` | `@docs` | 3: core, api, infra |
-| `libar-generic` | `@libar-docs-` | `@libar-docs` | 3: core, api, infra |
-| `ddd-es-cqrs` | `@libar-docs-` | `@libar-docs` | 21: full DDD taxonomy |
+| `libar-generic` | `@architect-` | `@architect` | 3: core, api, infra |
+| `ddd-es-cqrs` | `@architect-` | `@architect` | 21: full DDD taxonomy |
 
 This tutorial uses `libar-generic` throughout.
 
@@ -145,7 +145,7 @@ The Process Data API is your window into the delivery process state. We will use
 
 ```bash {"closeTerminalOnSuccess":"false","name":"checkpoint-2"}
 echo "=== Part 2 Checkpoint ==="
-[ -f "delivery-process.config.ts" ] && echo "delivery-process.config.ts: PASS" || echo "delivery-process.config.ts: FAIL"
+[ -f "architect.config.ts" ] && echo "architect.config.ts: PASS" || echo "architect.config.ts: FAIL"
 npm run process:overview 2>&1 | head -3
 ```
 
@@ -157,7 +157,7 @@ npm run process:overview 2>&1 | head -3
 
 ### 3.1 File opt-in
 
-Every file that the scanner should process needs a **file opt-in marker**. For the `libar-generic` preset, this is `/** @libar-docs */` as a standalone JSDoc comment at the top. Without it, the file is invisible to the scanner.
+Every file that the scanner should process needs a **file opt-in marker**. For the `libar-generic` preset, this is `/** @architect */` as a standalone JSDoc comment at the top. Without it, the file is invisible to the scanner.
 
 ### 3.2 Create your first annotated source
 
@@ -165,13 +165,13 @@ This creates `src/sample-sources/user-service.ts` with the essential tags:
 
 ```bash {"name":"create-user-service-v1"}
 cat > src/sample-sources/user-service.ts << 'TYPESCRIPT'
-/** @libar-docs */
+/** @architect */
 
 /**
- * @libar-docs-pattern UserService
- * @libar-docs-status active
- * @libar-docs-core
- * @libar-docs-brief Core user lifecycle management service
+ * @architect-pattern UserService
+ * @architect-status active
+ * @architect-core
+ * @architect-brief Core user lifecycle management service
  *
  * ## UserService - User Lifecycle Management
  *
@@ -210,10 +210,10 @@ echo "Created src/sample-sources/user-service.ts"
 
 Four tags is all you need to get started:
 
-- `@libar-docs-pattern UserService` -- names this pattern (required)
-- `@libar-docs-status active` -- FSM status: `roadmap` -> `active` -> `completed`, or `deferred`
-- `@libar-docs-core` -- category assignment (flag tag -- no value needed)
-- `@libar-docs-brief` -- short description for summary tables
+- `@architect-pattern UserService` -- names this pattern (required)
+- `@architect-status active` -- FSM status: `roadmap` -> `active` -> `completed`, or `deferred`
+- `@architect-core` -- category assignment (flag tag -- no value needed)
+- `@architect-brief` -- short description for summary tables
 
 ### 3.3 See it detected
 
@@ -233,10 +233,10 @@ npm run process:sources 2>&1
 
 You created one annotated file and proved the scanner detects it. The minimum viable annotation is:
 
-1. `@libar-docs` -- file opt-in marker
-2. `@libar-docs-pattern Name` -- names the pattern
-3. `@libar-docs-status` -- FSM status
-4. A category flag (`@libar-docs-core`, `-api`, or `-infra`)
+1. `@architect` -- file opt-in marker
+2. `@architect-pattern Name` -- names the pattern
+3. `@architect-status` -- FSM status
+4. A category flag (`@architect-core`, `-api`, or `-infra`)
 
 ---
 
@@ -250,23 +250,23 @@ Now we replace `user-service.ts` with the full version including architecture ta
 
 ```bash {"name":"create-user-service-v2"}
 cat > src/sample-sources/user-service.ts << 'TYPESCRIPT'
-/** @libar-docs */
+/** @architect */
 
 /**
- * @libar-docs-pattern UserService
- * @libar-docs-status active
- * @libar-docs-core
- * @libar-docs-arch-role service
- * @libar-docs-arch-context identity
- * @libar-docs-arch-layer application
- * @libar-docs-extract-shapes UserRecord
- * @libar-docs-phase 1
- * @libar-docs-release v0.1.0
- * @libar-docs-brief Core user lifecycle management service
- * @libar-docs-usecase "Register a new user account via the signup form"
- * @libar-docs-usecase "Look up a user by ID for profile display"
- * @libar-docs-usecase "Deactivate a compromised user account"
- * @libar-docs-quarter Q1-2026
+ * @architect-pattern UserService
+ * @architect-status active
+ * @architect-core
+ * @architect-arch-role service
+ * @architect-arch-context identity
+ * @architect-arch-layer application
+ * @architect-extract-shapes UserRecord
+ * @architect-phase 1
+ * @architect-release v0.1.0
+ * @architect-brief Core user lifecycle management service
+ * @architect-usecase "Register a new user account via the signup form"
+ * @architect-usecase "Look up a user by ID for profile display"
+ * @architect-usecase "Deactivate a compromised user account"
+ * @architect-quarter Q1-2026
  *
  * ## UserService - User Lifecycle Management
  *
@@ -279,7 +279,7 @@ cat > src/sample-sources/user-service.ts << 'TYPESCRIPT'
  * - When deactivating user accounts
  */
 
-/** @libar-docs-shape reference-sample */
+/** @architect-shape reference-sample */
 export interface UserRecord {
   id: string;
   email: string;
@@ -316,25 +316,25 @@ echo "Updated src/sample-sources/user-service.ts with richness tags"
 
 | Tag | Example | Purpose |
 |---|---|---|
-| `@libar-docs-arch-role` | `service` | Component type |
-| `@libar-docs-arch-context` | `identity` | Bounded context (creates diagram subgraphs) |
-| `@libar-docs-arch-layer` | `application` | Architecture layer |
+| `@architect-arch-role` | `service` | Component type |
+| `@architect-arch-context` | `identity` | Bounded context (creates diagram subgraphs) |
+| `@architect-arch-layer` | `application` | Architecture layer |
 
 **Enrichment tags** -- drive roadmaps and detail pages:
 
 | Tag | Example | Purpose |
 |---|---|---|
-| `@libar-docs-usecase` | `"Register a new user..."` | Use cases (quoted, repeatable) |
-| `@libar-docs-quarter` | `Q1-2026` | Timeline tracking |
-| `@libar-docs-phase` | `1` | Roadmap phase number |
-| `@libar-docs-release` | `v0.1.0` | Target release version |
+| `@architect-usecase` | `"Register a new user..."` | Use cases (quoted, repeatable) |
+| `@architect-quarter` | `Q1-2026` | Timeline tracking |
+| `@architect-phase` | `1` | Roadmap phase number |
+| `@architect-release` | `v0.1.0` | Target release version |
 
 **Shape extraction** -- pulls TypeScript interfaces into docs:
 
 | Tag | Example | Purpose |
 |---|---|---|
-| `@libar-docs-extract-shapes` | `UserRecord` | Extract named types into docs |
-| `@libar-docs-shape` | `reference-sample` | Mark an interface for shape discovery |
+| `@architect-extract-shapes` | `UserRecord` | Extract named types into docs |
+| `@architect-shape` | `reference-sample` | Mark an interface for shape discovery |
 
 ### Verify the enriched tags
 
@@ -362,27 +362,27 @@ Update `user-service.ts` with relationship tags (`used-by`, `uses`, `depends-on`
 
 ```bash {"name":"create-user-service-final"}
 cat > src/sample-sources/user-service.ts << 'TYPESCRIPT'
-/** @libar-docs */
+/** @architect */
 
 /**
- * @libar-docs-pattern UserService
- * @libar-docs-status active
- * @libar-docs-core
- * @libar-docs-arch-role service
- * @libar-docs-arch-context identity
- * @libar-docs-arch-layer application
- * @libar-docs-used-by AuthHandler
- * @libar-docs-uses EventStore
- * @libar-docs-extract-shapes UserRecord
- * @libar-docs-phase 1
- * @libar-docs-release v0.1.0
- * @libar-docs-brief Core user lifecycle management service
- * @libar-docs-usecase "Register a new user account via the signup form"
- * @libar-docs-usecase "Look up a user by ID for profile display"
- * @libar-docs-usecase "Deactivate a compromised user account"
- * @libar-docs-quarter Q1-2026
- * @libar-docs-depends-on EventStore
- * @libar-docs-see-also AuthHandler, EventStore
+ * @architect-pattern UserService
+ * @architect-status active
+ * @architect-core
+ * @architect-arch-role service
+ * @architect-arch-context identity
+ * @architect-arch-layer application
+ * @architect-used-by AuthHandler
+ * @architect-uses EventStore
+ * @architect-extract-shapes UserRecord
+ * @architect-phase 1
+ * @architect-release v0.1.0
+ * @architect-brief Core user lifecycle management service
+ * @architect-usecase "Register a new user account via the signup form"
+ * @architect-usecase "Look up a user by ID for profile display"
+ * @architect-usecase "Deactivate a compromised user account"
+ * @architect-quarter Q1-2026
+ * @architect-depends-on EventStore
+ * @architect-see-also AuthHandler, EventStore
  *
  * ## UserService - User Lifecycle Management
  *
@@ -395,7 +395,7 @@ cat > src/sample-sources/user-service.ts << 'TYPESCRIPT'
  * - When deactivating user accounts
  */
 
-/** @libar-docs-shape reference-sample */
+/** @architect-shape reference-sample */
 export interface UserRecord {
   id: string;
   email: string;
@@ -430,35 +430,35 @@ echo "Updated src/sample-sources/user-service.ts with relationship tags"
 
 | Tag | Example | Purpose |
 |---|---|---|
-| `@libar-docs-uses` | `EventStore` | Direct dependency (solid arrow in diagrams) |
-| `@libar-docs-used-by` | `AuthHandler` | Reverse dependency |
-| `@libar-docs-depends-on` | `EventStore` | Roadmap sequencing (dashed arrow) |
-| `@libar-docs-enables` | `UserService` | Reverse sequencing |
-| `@libar-docs-see-also` | `AuthHandler, EventStore` | Cross-reference |
+| `@architect-uses` | `EventStore` | Direct dependency (solid arrow in diagrams) |
+| `@architect-used-by` | `AuthHandler` | Reverse dependency |
+| `@architect-depends-on` | `EventStore` | Roadmap sequencing (dashed arrow) |
+| `@architect-enables` | `UserService` | Reverse sequencing |
+| `@architect-see-also` | `AuthHandler, EventStore` | Cross-reference |
 
 ### 5.2 Create AuthHandler
 
 ```bash {"name":"create-auth-handler"}
 cat > src/sample-sources/auth-handler.ts << 'TYPESCRIPT'
-/** @libar-docs */
+/** @architect */
 
 /**
- * @libar-docs-pattern AuthHandler
- * @libar-docs-status roadmap
- * @libar-docs-api
- * @libar-docs-arch-role service
- * @libar-docs-arch-context identity
- * @libar-docs-arch-layer application
- * @libar-docs-uses UserService
- * @libar-docs-extract-shapes AuthResult
- * @libar-docs-phase 2
- * @libar-docs-release vNEXT
- * @libar-docs-brief Authentication and session management handler
- * @libar-docs-usecase "Authenticate a user with email and password"
- * @libar-docs-usecase "Validate an active session token"
- * @libar-docs-depends-on UserService
- * @libar-docs-quarter Q1-2026
- * @libar-docs-see-also UserService
+ * @architect-pattern AuthHandler
+ * @architect-status roadmap
+ * @architect-api
+ * @architect-arch-role service
+ * @architect-arch-context identity
+ * @architect-arch-layer application
+ * @architect-uses UserService
+ * @architect-extract-shapes AuthResult
+ * @architect-phase 2
+ * @architect-release vNEXT
+ * @architect-brief Authentication and session management handler
+ * @architect-usecase "Authenticate a user with email and password"
+ * @architect-usecase "Validate an active session token"
+ * @architect-depends-on UserService
+ * @architect-quarter Q1-2026
+ * @architect-see-also UserService
  *
  * ## AuthHandler - Authentication & Sessions
  *
@@ -470,7 +470,7 @@ cat > src/sample-sources/auth-handler.ts << 'TYPESCRIPT'
  * - When creating or validating sessions
  */
 
-/** @libar-docs-shape reference-sample */
+/** @architect-shape reference-sample */
 export interface AuthResult {
   success: boolean;
   sessionId?: string;
@@ -497,25 +497,25 @@ echo "Created src/sample-sources/auth-handler.ts"
 
 ```bash {"name":"create-event-store"}
 cat > src/sample-sources/event-store.ts << 'TYPESCRIPT'
-/** @libar-docs */
+/** @architect */
 
 /**
- * @libar-docs-pattern EventStore
- * @libar-docs-status deferred
- * @libar-docs-infra
- * @libar-docs-arch-role infrastructure
- * @libar-docs-arch-context persistence
- * @libar-docs-arch-layer infrastructure
- * @libar-docs-used-by UserService
- * @libar-docs-extract-shapes DomainEvent
- * @libar-docs-phase 3
- * @libar-docs-release vNEXT
- * @libar-docs-brief Append-only event store for domain event persistence
- * @libar-docs-usecase "Persist a domain event after a user action"
- * @libar-docs-usecase "Replay events for audit trail or debugging"
- * @libar-docs-quarter Q2-2026
- * @libar-docs-enables UserService
- * @libar-docs-see-also UserService
+ * @architect-pattern EventStore
+ * @architect-status deferred
+ * @architect-infra
+ * @architect-arch-role infrastructure
+ * @architect-arch-context persistence
+ * @architect-arch-layer infrastructure
+ * @architect-used-by UserService
+ * @architect-extract-shapes DomainEvent
+ * @architect-phase 3
+ * @architect-release vNEXT
+ * @architect-brief Append-only event store for domain event persistence
+ * @architect-usecase "Persist a domain event after a user action"
+ * @architect-usecase "Replay events for audit trail or debugging"
+ * @architect-quarter Q2-2026
+ * @architect-enables UserService
+ * @architect-see-also UserService
  *
  * ## EventStore - Append-Only Event Storage
  *
@@ -528,7 +528,7 @@ cat > src/sample-sources/event-store.ts << 'TYPESCRIPT'
  * - When replaying event history
  */
 
-/** @libar-docs-shape reference-sample */
+/** @architect-shape reference-sample */
 export interface DomainEvent {
   type: string;
   payload: unknown;
@@ -649,26 +649,26 @@ TypeScript annotations describe what exists. Gherkin features describe what need
 
 In Gherkin files: tags before `Feature:` are metadata (like JSDoc tags). `Background:` sets up shared context. `Rule:` blocks define business constraints. `Scenario:` blocks are test cases with Given/When/Then.
 
-**Important:** Gherkin features must include the `@libar-docs` opt-in tag. Tags use **colon syntax** (not spaces like TypeScript).
+**Important:** Gherkin features must include the `@architect` opt-in tag. Tags use **colon syntax** (not spaces like TypeScript).
 
 | Syntax | Context | Example |
 |---|---|---|
-| Space-separated | TypeScript JSDoc | `@libar-docs-pattern UserService` |
-| Colon-separated | Gherkin tags | `@libar-docs-pattern:UserRegistration` |
+| Space-separated | TypeScript JSDoc | `@architect-pattern UserService` |
+| Colon-separated | Gherkin tags | `@architect-pattern:UserRegistration` |
 
 ### 7.2 Create user-registration.feature
 
 ```bash {"name":"create-user-reg-feature"}
 cat > src/specs/user-registration.feature << 'GHERKIN'
-@libar-docs
-@libar-docs-pattern:UserRegistration
-@libar-docs-status:roadmap
-@libar-docs-core
-@libar-docs-phase:1
-@libar-docs-release:v0.1.0
-@libar-docs-uses:UserService
-@libar-docs-implements:UserService
-@libar-docs-quarter:Q1-2026
+@architect
+@architect-pattern:UserRegistration
+@architect-status:roadmap
+@architect-core
+@architect-phase:1
+@architect-release:v0.1.0
+@architect-uses:UserService
+@architect-implements:UserService
+@architect-quarter:Q1-2026
 Feature: User Registration
   As a new user
   I want to register an account
@@ -731,16 +731,16 @@ echo "Created src/specs/user-registration.feature"
 
 ```bash {"name":"create-auth-feature"}
 cat > src/specs/authentication.feature << 'GHERKIN'
-@libar-docs
-@libar-docs-pattern:Authentication
-@libar-docs-status:roadmap
-@libar-docs-api
-@libar-docs-phase:2
-@libar-docs-release:vNEXT
-@libar-docs-uses:UserService
-@libar-docs-implements:AuthHandler
-@libar-docs-depends-on:UserRegistration
-@libar-docs-quarter:Q1-2026
+@architect
+@architect-pattern:Authentication
+@architect-status:roadmap
+@architect-api
+@architect-phase:2
+@architect-release:vNEXT
+@architect-uses:UserService
+@architect-implements:AuthHandler
+@architect-depends-on:UserRegistration
+@architect-quarter:Q1-2026
 Feature: Authentication
   As a registered user
   I want to log in to my account
@@ -834,25 +834,25 @@ Design stubs describe a pattern's design before the implementation exists -- mak
 
 ```bash {"name":"create-notification-stub"}
 cat > src/stubs/notification-service.stub.ts << 'TYPESCRIPT'
-/** @libar-docs */
+/** @architect */
 
 /**
- * @libar-docs-pattern NotificationService
- * @libar-docs-status roadmap
- * @libar-docs-infra
- * @libar-docs-arch-role service
- * @libar-docs-arch-context identity
- * @libar-docs-arch-layer infrastructure
- * @libar-docs-target src/sample-sources/notification-service.ts
- * @libar-docs-since design-session-1
- * @libar-docs-uses AuthHandler
- * @libar-docs-phase 2
- * @libar-docs-release vNEXT
- * @libar-docs-brief Notification service for auth lifecycle events
- * @libar-docs-usecase "Send welcome email after user registration"
- * @libar-docs-usecase "Send login alert for new device"
- * @libar-docs-quarter Q2-2026
- * @libar-docs-extract-shapes NotificationConfig, NotificationResult
+ * @architect-pattern NotificationService
+ * @architect-status roadmap
+ * @architect-infra
+ * @architect-arch-role service
+ * @architect-arch-context identity
+ * @architect-arch-layer infrastructure
+ * @architect-target src/sample-sources/notification-service.ts
+ * @architect-since design-session-1
+ * @architect-uses AuthHandler
+ * @architect-phase 2
+ * @architect-release vNEXT
+ * @architect-brief Notification service for auth lifecycle events
+ * @architect-usecase "Send welcome email after user registration"
+ * @architect-usecase "Send login alert for new device"
+ * @architect-quarter Q2-2026
+ * @architect-extract-shapes NotificationConfig, NotificationResult
  *
  * ## NotificationService - Auth Event Notifications
  *
@@ -870,14 +870,14 @@ cat > src/stubs/notification-service.stub.ts << 'TYPESCRIPT'
  * - When alerting users about new device logins
  */
 
-/** @libar-docs-shape reference-sample */
+/** @architect-shape reference-sample */
 export interface NotificationConfig {
   channel: "email" | "sms";
   template: string;
   recipientId: string;
 }
 
-/** @libar-docs-shape reference-sample */
+/** @architect-shape reference-sample */
 export interface NotificationResult {
   sent: boolean;
   channel: string;
@@ -891,8 +891,8 @@ Stub-specific tags:
 
 | Tag | Example | Purpose |
 |---|---|---|
-| `@libar-docs-target` | `src/sample-sources/notification-service.ts` | Path where the real implementation will live |
-| `@libar-docs-since` | `design-session-1` | Which design session created the stub |
+| `@architect-target` | `src/sample-sources/notification-service.ts` | Path where the real implementation will live |
+| `@architect-since` | `design-session-1` | Which design session created the stub |
 
 ### 8.2 Query stubs
 
@@ -952,7 +952,7 @@ npm run docs:list 2>&1
 npm run lint:patterns 2>&1 || true
 ```
 
-> **Note:** 3 errors are expected -- from `@libar-docs-shape` annotations on interfaces that lack their own `@libar-docs-pattern` names. This is normal.
+> **Note:** 3 errors are expected -- from `@architect-shape` annotations on interfaces that lack their own `@architect-pattern` names. This is normal.
 
 ### Checkpoint: Part 9
 
@@ -1078,8 +1078,8 @@ echo "========================================"
 
 | Tag | Format | Example |
 |---|---|---|
-| `@libar-docs` | file opt-in | `/** @libar-docs */` |
-| `@libar-docs-pattern` | `Name` | `@libar-docs-pattern UserService` |
+| `@architect` | file opt-in | `/** @architect */` |
+| `@architect-pattern` | `Name` | `@architect-pattern UserService` |
 
 ### Status FSM
 

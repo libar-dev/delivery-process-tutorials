@@ -1,4 +1,4 @@
-import { defineConfig } from "@libar-dev/delivery-process/config";
+import { defineConfig } from "@libar-dev/architect/config";
 
 export default defineConfig({
   preset: "libar-generic",
@@ -15,7 +15,6 @@ export default defineConfig({
     {
       title: "Identity & Persistence Reference",
       conventionTags: [],
-      shapeSources: ["src/sample-sources/**/*.ts"],
       behaviorCategories: ["core", "api", "infra"],
       diagramScopes: [
         {

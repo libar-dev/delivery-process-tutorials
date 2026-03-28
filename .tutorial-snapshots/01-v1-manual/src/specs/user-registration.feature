@@ -1,12 +1,12 @@
-@libar-docs
-@libar-docs-pattern:UserRegistration
-@libar-docs-status:roadmap
-@libar-docs-core
-@libar-docs-phase:1
-@libar-docs-release:v0.1.0
-@libar-docs-uses:UserService
-@libar-docs-implements:UserService
-@libar-docs-quarter:Q1-2026
+@architect
+@architect-pattern:UserRegistration
+@architect-status:roadmap
+@architect-core
+@architect-phase:1
+@architect-release:v0.1.0
+@architect-uses:UserService
+@architect-implements:UserService
+@architect-quarter:Q1-2026
 Feature: User Registration
   As a new user
   I want to register an account

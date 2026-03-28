@@ -4,7 +4,7 @@ set -euo pipefail
 # record-all.sh — Generate all tutorial GIF recordings
 #
 # Usage:
-#   cd /path/to/dp-mini-demo
+#   cd /path/to/architect-mini-demo
 #   ./vhs/record-all.sh
 #
 # Each part depends on the previous, so they run sequentially.
